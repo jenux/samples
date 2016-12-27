@@ -119,8 +119,8 @@ define('app',["require", "exports", "aurelia-framework", "./web-api"], function 
             config.title = 'Aurelia-cli-ts';
             config.map([
                 { route: [''], redirect: 'contacts' },
-                { route: 'contacts', moduleId: './pages/contacts/contact-index', nav: true, title: 'Contacts' },
-                { route: 'projects', moduleId: './pages/projects/project-index', nav: true, title: 'Projects' },
+                { route: 'contacts', moduleId: './pages/contacts/index', nav: true, title: 'Contacts' },
+                { route: 'projects', moduleId: './pages/projects/index', nav: true, title: 'Projects' },
                 { route: 'flow-builder', moduleId: './pages/flow-builder/index', nav: true, title: 'Flow Builder' },
                 { route: 'form-builder', moduleId: './pages/form-builder/index', nav: true, title: 'Form Builder' }
             ]);
@@ -144,17 +144,7 @@ define('environment',["require", "exports"], function (require, exports) {
     };
 });
 
-define('home',["require", "exports"], function (require, exports) {
-    "use strict";
-    var Home = (function () {
-        function Home() {
-        }
-        return Home;
-    }());
-    exports.Home = Home;
-});
-
-define('main',["require", "exports", "./environment"], function (require, exports, environment_1) {
+define('main',["require", "exports", "./environment", "bootstrap", "jquery"], function (require, exports, environment_1) {
     "use strict";
     Promise.config({
         longStackTraces: environment_1.default.debug,
@@ -207,7 +197,11 @@ define('utility',["require", "exports"], function (require, exports) {
 define('resources/index',["require", "exports"], function (require, exports) {
     "use strict";
     function configure(config) {
-        config.globalResources(['./elements/loading-indicator']);
+        config.globalResources([
+            './elements/loading-indicator',
+            './elements/nav-bar/nav-bar',
+            './attributes/bs-popover'
+        ]);
     }
     exports.configure = configure;
 });
@@ -221,7 +215,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('pages/contacts/contact-detail',["require", "exports", "aurelia-framework", "../../web-api", "../../utility", "aurelia-event-aggregator", "../../message"], function (require, exports, aurelia_framework_1, web_api_1, utility_1, aurelia_event_aggregator_1, message_1) {
+define('pages/contacts/detail',["require", "exports", "aurelia-framework", "aurelia-event-aggregator", "../../web-api", "../../utility", "../../message"], function (require, exports, aurelia_framework_1, aurelia_event_aggregator_1, web_api_1, utility_1, message_1) {
     "use strict";
     var ContactDetail = (function () {
         function ContactDetail(api, ea) {
@@ -279,7 +273,7 @@ define('pages/contacts/contact-detail',["require", "exports", "aurelia-framework
     exports.ContactDetail = ContactDetail;
 });
 
-define('pages/contacts/contact-index',["require", "exports"], function (require, exports) {
+define('pages/contacts/index',["require", "exports"], function (require, exports) {
     "use strict";
     var ContactIndex = (function () {
         function ContactIndex() {
@@ -287,7 +281,7 @@ define('pages/contacts/contact-index',["require", "exports"], function (require,
         ContactIndex.prototype.configureRouter = function (config, router) {
             config.map([
                 { route: '', name: 'no-selection', moduleId: './no-selection', nav: false },
-                { route: ':id', name: 'contact', moduleId: './contact-detail', nav: false }
+                { route: ':id', name: 'contact', moduleId: './detail', nav: false }
             ]);
             this.router = router;
         };
@@ -305,7 +299,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('pages/contacts/contact-list',["require", "exports", "../../web-api", "aurelia-framework", "aurelia-event-aggregator", "../../message"], function (require, exports, web_api_1, aurelia_framework_1, aurelia_event_aggregator_1, message_1) {
+define('pages/contacts/list',["require", "exports", "../../web-api", "aurelia-framework", "aurelia-event-aggregator", "../../message"], function (require, exports, web_api_1, aurelia_framework_1, aurelia_event_aggregator_1, message_1) {
     "use strict";
     var ContactList = (function () {
         function ContactList(api, ea) {
@@ -349,16 +343,6 @@ define('pages/contacts/no-selection',["require", "exports"], function (require, 
 
 define('pages/flow-builder/builder',["require", "exports"], function (require, exports) {
     "use strict";
-    var Builder = (function () {
-        function Builder() {
-        }
-        return Builder;
-    }());
-    exports.Builder = Builder;
-});
-
-define('pages/flow-builder/index',["require", "exports"], function (require, exports) {
-    "use strict";
     var FlowBuilder = (function () {
         function FlowBuilder() {
         }
@@ -367,14 +351,34 @@ define('pages/flow-builder/index',["require", "exports"], function (require, exp
     exports.FlowBuilder = FlowBuilder;
 });
 
+define('pages/flow-builder/index',["require", "exports"], function (require, exports) {
+    "use strict";
+    var FlowBuild = (function () {
+        function FlowBuild() {
+        }
+        return FlowBuild;
+    }());
+    exports.FlowBuild = FlowBuild;
+});
+
 define('pages/flow-builder/toolbox',["require", "exports"], function (require, exports) {
     "use strict";
-    var Toolbox = (function () {
-        function Toolbox() {
+    var FlowToolbox = (function () {
+        function FlowToolbox() {
         }
-        return Toolbox;
+        return FlowToolbox;
     }());
-    exports.Toolbox = Toolbox;
+    exports.FlowToolbox = FlowToolbox;
+});
+
+define('pages/projects/index',["require", "exports"], function (require, exports) {
+    "use strict";
+    var Projects = (function () {
+        function Projects() {
+        }
+        return Projects;
+    }());
+    exports.Projects = Projects;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -388,8 +392,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 define('pages/form-builder/builder',["require", "exports", "aurelia-framework", "aurelia-event-aggregator"], function (require, exports, aurelia_framework_1, aurelia_event_aggregator_1) {
     "use strict";
-    var Builder = (function () {
-        function Builder(ea) {
+    var FormBuilder = (function () {
+        function FormBuilder(ea) {
             var _this = this;
             this.widgets = [];
             this.widget = 'textbox';
@@ -397,7 +401,7 @@ define('pages/form-builder/builder',["require", "exports", "aurelia-framework", 
                 _this.widgets = [];
             });
         }
-        Builder.prototype.addWidget = function () {
+        FormBuilder.prototype.addWidget = function () {
             this.widgets.push({
                 id: new Date(),
                 type: this.widget,
@@ -408,7 +412,7 @@ define('pages/form-builder/builder',["require", "exports", "aurelia-framework", 
                 }
             });
         };
-        Builder.prototype.removeWidget = function (widget) {
+        FormBuilder.prototype.removeWidget = function (widget) {
             var idx = this.widgets.map(function (obj, index) {
                 if (obj.id === widget.id)
                     return index;
@@ -417,42 +421,43 @@ define('pages/form-builder/builder',["require", "exports", "aurelia-framework", 
             });
             this.widgets.splice(idx, 1);
         };
-        Builder.prototype.attached = function () {
+        FormBuilder.prototype.attached = function () {
         };
-        return Builder;
+        return FormBuilder;
     }());
-    Builder = __decorate([
+    FormBuilder = __decorate([
         aurelia_framework_1.inject(aurelia_event_aggregator_1.EventAggregator),
         __metadata("design:paramtypes", [aurelia_event_aggregator_1.EventAggregator])
-    ], Builder);
-    exports.Builder = Builder;
+    ], FormBuilder);
+    exports.FormBuilder = FormBuilder;
 });
 
 define('pages/form-builder/index',["require", "exports"], function (require, exports) {
     "use strict";
     var FormDesigner = (function () {
         function FormDesigner() {
+            this.heading = "Form designer";
         }
         return FormDesigner;
     }());
     exports.FormDesigner = FormDesigner;
 });
 
-define('features/fields/_classes/form-fields',["require", "exports"], function (require, exports) {
+define('modules/fields/base/base',["require", "exports"], function (require, exports) {
     "use strict";
-    var FormFields = (function () {
-        function FormFields() {
+    var FieldBase = (function () {
+        function FieldBase() {
             this.id = 0;
         }
-        FormFields.prototype.getId = function () {
+        FieldBase.prototype.getId = function () {
             return this.id++;
         };
-        FormFields.prototype.sayHello = function () {
+        FieldBase.prototype.sayHello = function () {
             console.info('***', this.type);
         };
-        return FormFields;
+        return FieldBase;
     }());
-    exports.FormFields = FormFields;
+    exports.FieldBase = FieldBase;
 });
 
 var __extends = (this && this.__extends) || function (d, b) {
@@ -460,7 +465,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-define('features/fields/textbox/textbox',["require", "exports", "../_classes/form-fields"], function (require, exports, form_fields_1) {
+define('modules/fields/textbox/textbox',["require", "exports", "../base/base"], function (require, exports, base_1) {
     "use strict";
     var Textbox = (function (_super) {
         __extends(Textbox, _super);
@@ -474,15 +479,14 @@ define('features/fields/textbox/textbox',["require", "exports", "../_classes/for
         }
         Textbox.prototype.activate = function (model) {
             this.text = model;
-            console.info('####');
             this.sayHello();
         };
         return Textbox;
-    }(form_fields_1.FormFields));
+    }(base_1.FieldBase));
     exports.Textbox = Textbox;
 });
 
-define('features/fields/header/header',["require", "exports"], function (require, exports) {
+define('modules/fields/header/header',["require", "exports"], function (require, exports) {
     "use strict";
     var Header = (function () {
         function Header() {
@@ -504,34 +508,63 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('pages/form-builder/toolbox',["require", "exports", "aurelia-framework", "aurelia-event-aggregator", "../../features/fields/textbox/textbox", "../../features/fields/header/header"], function (require, exports, aurelia_framework_1, aurelia_event_aggregator_1, textbox_1, header_1) {
+define('pages/form-builder/toolbox',["require", "exports", "aurelia-framework", "aurelia-event-aggregator", "../../modules/fields/textbox/textbox", "../../modules/fields/header/header"], function (require, exports, aurelia_framework_1, aurelia_event_aggregator_1, textbox_1, header_1) {
     "use strict";
-    var Toolbox = (function () {
-        function Toolbox(ea, textbox, header) {
+    var FormToolbox = (function () {
+        function FormToolbox(ea, textbox, header) {
             this.widgets = [
                 textbox,
                 header
             ];
         }
-        Toolbox.prototype.attached = function () {
+        FormToolbox.prototype.attached = function () {
         };
-        return Toolbox;
+        return FormToolbox;
     }());
-    Toolbox = __decorate([
+    FormToolbox = __decorate([
         aurelia_framework_1.inject(aurelia_event_aggregator_1.EventAggregator, textbox_1.Textbox, header_1.Header),
         __metadata("design:paramtypes", [aurelia_event_aggregator_1.EventAggregator, textbox_1.Textbox, header_1.Header])
-    ], Toolbox);
-    exports.Toolbox = Toolbox;
+    ], FormToolbox);
+    exports.FormToolbox = FormToolbox;
 });
 
-define('pages/projects/project-index',["require", "exports"], function (require, exports) {
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('resources/attributes/bs-popover',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
     "use strict";
-    var ProjectIndex = (function () {
-        function ProjectIndex() {
+    var Popover = (function () {
+        function Popover(element) {
+            this.placement = 'right';
+            this.elem = element;
         }
-        return ProjectIndex;
+        Popover.prototype.bind = function () {
+            $(this.elem).popover({
+                container: 'body',
+                title: this.title,
+                placement: this.placement,
+                content: this.content,
+                trigger: 'hover'
+            });
+        };
+        Popover.prototype.propertyChanged = function (name, newValue, oldValue) {
+            $(this.elem).data('bs.popover').options[name] = newValue;
+        };
+        return Popover;
     }());
-    exports.ProjectIndex = ProjectIndex;
+    Popover = __decorate([
+        aurelia_framework_1.autoinject,
+        aurelia_framework_1.customAttribute('bs-popover'),
+        aurelia_framework_1.dynamicOptions,
+        __metadata("design:paramtypes", [Element])
+    ], Popover);
+    exports.Popover = Popover;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -616,6 +649,18 @@ define('resources/view-models/list-view-model',["require", "exports"], function 
     exports.ListViewModel = ListViewModel;
 });
 
+
+
+define("modules/fields/checkbox/checkbox", [],function(){});
+
+
+
+define("modules/triggers/base/base", [],function(){});
+
+
+
+define("modules/triggers/timer/timer", [],function(){});
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -625,11 +670,38 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('widgets/nav-bar/nav-bar',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+define('resources/elements/modal/modal',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    var Modal = (function () {
+        function Modal(element) {
+            this.elem = element;
+        }
+        Modal.prototype.attached = function () {
+            $(this.modal).modal();
+        };
+        return Modal;
+    }());
+    Modal = __decorate([
+        aurelia_framework_1.autoinject,
+        aurelia_framework_1.customElement('modal'),
+        __metadata("design:paramtypes", [Element])
+    ], Modal);
+    exports.Modal = Modal;
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('resources/elements/nav-bar/nav-bar',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
     "use strict";
     var NavBar = (function () {
         function NavBar() {
-            this.router = null;
         }
         return NavBar;
     }());
@@ -637,29 +709,103 @@ define('widgets/nav-bar/nav-bar',["require", "exports", "aurelia-framework"], fu
         aurelia_framework_1.bindable,
         __metadata("design:type", Object)
     ], NavBar.prototype, "router", void 0);
+    NavBar = __decorate([
+        aurelia_framework_1.customElement('nav-bar'),
+        __metadata("design:paramtypes", [])
+    ], NavBar);
     exports.NavBar = NavBar;
 });
 
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('resources/elements/modal/modal-header',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    var ModalHeader = (function () {
+        function ModalHeader() {
+            this.title = '';
+        }
+        return ModalHeader;
+    }());
+    __decorate([
+        aurelia_framework_1.bindable,
+        __metadata("design:type", Object)
+    ], ModalHeader.prototype, "title", void 0);
+    exports.ModalHeader = ModalHeader;
+});
 
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('resources/elements/modal/modal-footer',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    var ModalFooter = (function () {
+        function ModalFooter() {
+            this.buttons = [];
+        }
+        return ModalFooter;
+    }());
+    __decorate([
+        aurelia_framework_1.bindable,
+        __metadata("design:type", Object)
+    ], ModalFooter.prototype, "buttons", void 0);
+    exports.ModalFooter = ModalFooter;
+});
 
-define("features/fields/checkbox/checkbox", [],function(){});
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('resources/elements/modal/modal-body',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    var ModalBody = (function () {
+        function ModalBody() {
+        }
+        return ModalBody;
+    }());
+    __decorate([
+        aurelia_framework_1.bindable,
+        __metadata("design:type", Object)
+    ], ModalBody.prototype, "content", void 0);
+    exports.ModalBody = ModalBody;
+});
 
 define('text!styles.css', ['module'], function(module) { module.exports = "body { padding-top: 70px; }\n\nsection {\n  margin: 0 20px;\n}\n\na:focus {\n  outline: none;\n}\n\n.navbar-nav li.loader {\n    margin: 12px 24px 0 6px;\n}\n\n.no-selection {\n  margin: 20px;\n}\n\n.contact-list {\n  overflow-y: auto;\n  border: 1px solid #ddd;\n  padding: 10px;\n}\n\n.panel {\n  margin: 20px;\n}\n\n.button-bar {\n  right: 0;\n  left: 0;\n  bottom: 0;\n  border-top: 1px solid #ddd;\n  background: white;\n}\n\n.button-bar > button {\n  float: right;\n  margin: 20px;\n}\n\nli.list-group-item {\n  list-style: none;\n}\n\nli.list-group-item > a {\n  text-decoration: none;\n}\n\nli.list-group-item.active > a {\n  color: white;\n}\n"; });
-define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <require from=\"./styles.css\"></require>\n  <require from=\"./widgets/nav-bar/nav-bar\"></require>\n  \n  <nav-bar router.bind=\"router\"></nav-bar>\n  <router-view></router-view>\n  \n</template>\n"; });
-define('text!home.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">Hello</div>\n</template>\n"; });
-define('text!pages/contacts/contact-detail.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"panel panel-primary\">\n    <div class=\"panel-heading\">\n      <h3 class=\"panel-title\">Profile</h3>\n      \n    </div>\n    <div class=\"panel-body\">\n      <form role=\"form\" class=\"form-horizontal\">\n        <div textcontent.bind=\"'is: ' + contact.firstName\"></div>\n        \n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">First Name</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"first name\" class=\"form-control\" value.bind=\"contact.firstName\">\n          </div>\n        </div>\n\n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">Last Name</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"last name\" class=\"form-control\" value.bind=\"contact.lastName\">\n          </div>\n        </div>\n\n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">Email</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"email\" class=\"form-control\" value.bind=\"contact.email\">\n          </div>\n        </div>\n\n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">Phone Number</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"phone number\" class=\"form-control\" value.bind=\"contact.phoneNumber\">\n          </div>\n        </div>\n      </form>\n    </div>\n  </div>\n\n  <div class=\"button-bar\">\n    <span>${message}</span>\n    <button class=\"btn btn-success\" click.delegate=\"save()\" disabled.bind=\"!canSave\">Save</button>\n  </div>\n</template>\n"; });
-define('text!pages/contacts/contact-index.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./contact-list\"></require>\n\n  <div class=\"container\">\n    <div class=\"row\">\n      <contact-list class=\"col-md-4\"></contact-list>\n      <router-view class=\"col-md-8\"></router-view>\n    </div>\n</template>\n"; });
-define('text!pages/contacts/contact-list.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"contact-list\">\n    <ul class=\"list-group\">\n      <li repeat.for=\"contact of contacts\" class=\"list-group-item ${contact.id === $parent.selectedId ? 'active' : ''}\">\n        <a route-href=\"route: contact; params.bind: {id:contact.id}\" click.delegate=\"$parent.select(contact)\">\n          <h4 class=\"list-group-item-heading\">${contact.firstName} ${contact.lastName}</h4>\n          <p class=\"list-group-item-text\">${contact.email}</p>\n        </a>\n      </li>\n    </ul>\n  </div>\n</template>\n"; });
-define('text!pages/contacts/no-selection.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"no-selection text-center\">\n    <h2>${message}</h2>\n  </div>\n</template>\n"; });
-define('text!pages/form-builder/builder.html', ['module'], function(module) { module.exports = "<template>\n  <input type=\"text\" name=\"\" value.bind=\"widget\">\n  <input type=\"button\" value=\"add\" click.trigger=\"addWidget()\">\n  <br>\n  <ul class=\"list-unstyled report\" ref=\"builderCanvas\">\n    <li repeat.for=\"widget of widgets\" class=\"au-animate\">\n      <compose\n        model.bind=\"widget.model\"\n        view-model=\"../../features/fields/${widget.type}/${widget.type}\" class=\"col-md-11\"></compose>\n      <i class=\"remove-widget fa fa-trash-o col-md-1 non-printable\" click.trigger=\"$parent.removeWidget(widget)\"></i>\n    </li>\n  </ul>\n</template>\n"; });
-define('text!pages/form-builder/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">\n      <h3 class=\"non-printable\">Form Builder</h3>\n\n      <div class=\"row\">\n          <compose class=\"col-md-2 non-printable\" view-model=\"./toolbox\"></compose>\n          <compose class=\"col-md-10 printable\" view-model=\"./builder\"></compose>\n      </div>\n  </div>\n</template>\n"; });
-define('text!pages/form-builder/toolbox.html', ['module'], function(module) { module.exports = "<template>\n  <h3>Tools</h3>\n  <ul class=\"list-unstyled toolbox au-stagger\" ref=\"toolboxList\">\n    <li repeat.for=\"widget of widgets\" class=\"au-animate\" title=\"${widget.type}\"><i class=\"fa ${widget.icon}\"/> ${widget.name}</li>\n  </ul>\n  <!--<button click.delegate=\"printReport()\" type=\"button\" class=\"btn btn-primary fa fa-print\"> Print</button>\n  <button click.delegate=\"clearReport()\" type=\"button\" class=\"btn btn-warning fa fa-remove\"> Clear Report</button>-->\n</template>\n"; });
+define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <require from=\"./styles.css\"></require>\n\n  <loading-indicator loading.bind=\"router.isNavigating || api.isRequesting\"></loading-indicator>\n\n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <router-view></router-view>\n</template>\n"; });
 define('text!pages/flow-builder/builder.html', ['module'], function(module) { module.exports = "<template>\nReports\n</template>\n"; });
 define('text!pages/flow-builder/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">\n      <h1 class=\"non-printable\">Report Builder</h1>\n\n      <div class=\"row\">\n          <compose class=\"col-md-2 non-printable\" view-model=\"./toolbox\"></compose>\n          <compose class=\"col-md-10 printable\" view-model=\"./builder\"></compose>\n      </div>\n  </div>\n</template>\n"; });
 define('text!pages/flow-builder/toolbox.html', ['module'], function(module) { module.exports = "<template>\n  <h3>Toolbox</h3>\n  <ul class=\"list-unstyled toolbox au-stagger\" ref=\"toolboxList\">\n    <li repeat.for=\"widget of widgets\" class=\"au-animate\" title=\"${widget.type}\"><i class=\"fa ${widget.icon}\"/> ${widget.name}</li>\n  </ul>\n  <button click.delegate=\"printReport()\" type=\"button\" class=\"btn btn-primary fa fa-print\"> Print</button>\n  <button click.delegate=\"clearReport()\" type=\"button\" class=\"btn btn-warning fa fa-remove\"> Clear Report</button>\n</template>\n"; });
-define('text!pages/projects/project-index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">Projects</div>\n</template>\n"; });
-define('text!widgets/nav-bar/nav-bar.html', ['module'], function(module) { module.exports = "<template> \n  <nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n      <div class=\"navbar-header\">\n        <a class=\"navbar-brand\" href=\"#\">\n          <i class=\"fa fa-user\"></i>\n          <span>${router.title}</span>\n        </a>\n      </div>\n    </nav>\n\n    <nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n      <div class=\"navbar-header\">\n        <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">\n          <span class=\"sr-only\">Toggle Navigation</span>\n          <span class=\"icon-bar\"></span>\n          <span class=\"icon-bar\"></span>\n          <span class=\"icon-bar\"></span>\n        </button>\n        <a class=\"navbar-brand\" href=\"#\">\n          <i class=\"fa fa-home\"></i>\n          <span>${router.title}</span>\n        </a>\n      </div>\n\n      <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n        <ul class=\"nav navbar-nav\">\n          <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n            <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" href.bind=\"row.href\">${row.title}</a>\n          </li>\n        </ul>\n\n        <ul class=\"nav navbar-nav navbar-right\">\n          <li class=\"loader\" if.bind=\"router.isNavigating\">\n            <i class=\"fa fa-spinner fa-spin fa-2x\"></i>\n          </li>\n        </ul>\n      </div>\n    </nav>\n  </template>\n"; });
-define('text!features/fields/checkbox/checkbox.html', ['module'], function(module) { module.exports = ""; });
-define('text!features/fields/header/header.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"col-md-12\">\n    <h2>Abstract-IT &trade;</h2>\n    <p>Delivering concrete solutions</p>\n\n    <div class=\"pull-right\">\n      Funnyroad 123<br />\n      1010 SOME-STATE<br />\n      USA<br />\n    </div>\n  </div>\n</template>\n"; });
-define('text!features/fields/textbox/textbox.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"col-md-12\">\n    ** ${name}\n  </div>\n</template>\n"; });
+define('text!pages/contacts/detail.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"panel panel-primary\">\n    <div class=\"panel-heading\">\n      <h3 class=\"panel-title\"   \n        bs-popover=\"placement:'right'; title.bind: contact.firstName; content.bind: contact.lastName\">Profile</h3>\n      \n    </div>\n    <div class=\"panel-body\">\n      <form role=\"form\" class=\"form-horizontal\">\n        <div textcontent.bind=\"'is: ' + contact.firstName\"></div>\n        \n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">First Name</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"first name\" class=\"form-control\" value.bind=\"contact.firstName\">\n          </div>\n        </div>\n\n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">Last Name</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"last name\" class=\"form-control\" value.bind=\"contact.lastName\">\n          </div>\n        </div>\n\n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">Email</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"email\" class=\"form-control\" value.bind=\"contact.email\">\n          </div>\n        </div>\n\n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">Phone Number</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"phone number\" class=\"form-control\" value.bind=\"contact.phoneNumber\">\n          </div>\n        </div>\n      </form>\n    </div>\n  </div>\n\n  <div class=\"button-bar\">\n    <span>${message}</span>\n    <button class=\"btn btn-success\" click.delegate=\"save()\" disabled.bind=\"!canSave\">Save</button>\n  </div>\n</template>\n"; });
+define('text!pages/contacts/index.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./list\"></require>\n\n  <div class=\"container\">\n    <div class=\"row\">\n      <contact-list class=\"col-md-4\"></contact-list>\n      <router-view class=\"col-md-8\"></router-view>\n    </div>\n</template>\n"; });
+define('text!pages/contacts/list.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"contact-list\">\n    <ul class=\"list-group\">\n      <li repeat.for=\"contact of contacts\" class=\"list-group-item ${contact.id === $parent.selectedId ? 'active' : ''}\">\n        <a route-href=\"route: contact; params.bind: {id:contact.id}\" click.delegate=\"$parent.select(contact)\">\n          <h4 class=\"list-group-item-heading\">${contact.firstName} ${contact.lastName}</h4>\n          <p class=\"list-group-item-text\">${contact.email}</p>\n        </a>\n      </li>\n    </ul>\n  </div>\n</template>\n"; });
+define('text!pages/contacts/no-selection.html', ['module'], function(module) { module.exports = "<template>\n  <require from='../../resources/elements/modal/modal'></require>\n  \n  <div class=\"no-selection text-center\">\n    <h2>${message}</h2>\n  </div>\n</template>\n"; });
+define('text!pages/form-builder/builder.html', ['module'], function(module) { module.exports = "<template>\n  <input type=\"text\" name=\"\" value.bind=\"widget\">\n  <input type=\"button\" value=\"add\" click.trigger=\"addWidget()\">\n  <br>\n  <ul class=\"list-unstyled report\" ref=\"builderCanvas\">\n    <li repeat.for=\"widget of widgets\" class=\"au-animate\">\n      <compose\n        model.bind=\"widget.model\"\n        view-model=\"../../modules/fields/${widget.type}/${widget.type}\" class=\"col-md-11\"></compose>\n      <i class=\"remove-widget fa fa-trash-o col-md-1 non-printable\" click.trigger=\"$parent.removeWidget(widget)\"></i>\n    </li>\n  </ul>\n</template>\n"; });
+define('text!pages/form-builder/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">\n      <h3 class=\"non-printable\">${heading}</h3>\n      <hr>\n\n      <div class=\"row\">\n          <compose class=\"col-md-2 non-printable\" view-model=\"./toolbox\"></compose>\n          <compose class=\"col-md-10 printable\" view-model=\"./builder\"></compose>\n      </div>\n  </div>\n</template>\n"; });
+define('text!pages/form-builder/toolbox.html', ['module'], function(module) { module.exports = "<template>\n  <h3>Tools</h3>\n  <ul class=\"list-unstyled toolbox au-stagger\" ref=\"toolboxList\">\n    <li repeat.for=\"widget of widgets\" class=\"au-animate\" title=\"${widget.type}\"><i class=\"fa ${widget.icon}\"/> ${widget.name}</li>\n  </ul>\n  <!--<button click.delegate=\"printReport()\" type=\"button\" class=\"btn btn-primary fa fa-print\"> Print</button>\n  <button click.delegate=\"clearReport()\" type=\"button\" class=\"btn btn-warning fa fa-remove\"> Clear Report</button>-->\n</template>\n"; });
+define('text!pages/projects/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">Projects</div>\n</template>\n"; });
+define('text!modules/fields/checkbox/checkbox.html', ['module'], function(module) { module.exports = ""; });
+define('text!modules/fields/header/header.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"col-md-12\">\n    <h2>Abstract-IT &trade;</h2>\n    <p>Delivering concrete solutions</p>\n\n    <div class=\"pull-right\">\n      Funnyroad 123<br />\n      1010 SOME-STATE<br />\n      USA<br />\n    </div>\n  </div>\n</template>\n"; });
+define('text!modules/fields/textbox/textbox.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"col-md-12\">\n    ** ${name}\n  </div>\n</template>\n"; });
+define('text!resources/elements/modal/modal.html', ['module'], function(module) { module.exports = "<template>  \n  <div class=\"modal fade\" ref=\"modal\">\n    <div class=\"modal-dialog\">\n      <div class=\"modal-content\">\n        <content select=\"modal-header\"></content>\n        <content select=\"modal-body\"></content>\n        <content select=\"modal-footer\"></content>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
+define('text!resources/elements/nav-bar/nav-bar.html', ['module'], function(module) { module.exports = "<template> \n  <nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n      <div class=\"navbar-header\">\n        <a class=\"navbar-brand\" href=\"#\">\n          <i class=\"fa fa-user\"></i>\n          <span>${router.title}</span>\n        </a>\n      </div>\n    </nav>\n\n    <nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n      <div class=\"navbar-header\">\n        <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">\n          <span class=\"sr-only\">Toggle Navigation</span>\n          <span class=\"icon-bar\"></span>\n          <span class=\"icon-bar\"></span>\n          <span class=\"icon-bar\"></span>\n        </button>\n        <a class=\"navbar-brand\" href=\"#\">\n          <i class=\"fa fa-home\"></i>\n          <span>${router.title}</span>\n        </a>\n      </div>\n\n      <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n        <ul class=\"nav navbar-nav\">\n          <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n            <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" href.bind=\"row.href\">${row.title}</a>\n          </li>\n        </ul>\n\n        <ul class=\"nav navbar-nav navbar-right\">\n          <li class=\"loader\" if.bind=\"router.isNavigating\">\n            <i class=\"fa fa-spinner fa-spin fa-2x\"></i>\n          </li>\n        </ul>\n      </div>\n    </nav>\n  </template>\n"; });
+define('text!resources/elements/modal/modal-header.html', ['module'], function(module) { module.exports = "<template>  \n  <div class=\"modal-header\">\n    <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">\n      <span aria-hidden=\"true\">&times;</span>\n    </button>\n    <h4 class=\"modal-title\">${title}</h4>\n  </div>\n</template>\n"; });
+define('text!resources/elements/modal/modal-footer.html', ['module'], function(module) { module.exports = "<template>  \n  <div class=\"modal-footer\">\n    <button type=\"button\" class=\"btn btn-default\" repeat.for=\"button of buttons\">${button}</button>\n  </div>\n</template>  \n"; });
+define('text!resources/elements/modal/modal-body.html', ['module'], function(module) { module.exports = "<template>  \n  <div class=\"modal-body\">\n    <compose view-model.bind=\"content\"></compose>\n  </div>\n</template>\n"; });
 //# sourceMappingURL=app-bundle.js.map

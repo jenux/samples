@@ -1,8 +1,8 @@
 import {inject} from 'aurelia-framework';
-import {WebAPI} from '../../web-api';
-import {areEqual} from '../../utility';
-
 import {EventAggregator} from 'aurelia-event-aggregator';
+import {WebAPI} from '../../web-api';
+
+import {areEqual} from '../../utility';
 import {ContactUpdated, ContactViewed} from '../../message';
 
 //import {computedFrom} from 'aurelia-framework';
@@ -18,7 +18,7 @@ export class ContactDetail {
   routeConfig;
   contact: Contact;
   originalContact: Contact;
-  message: "";
+  message: string;
 
   constructor(private api: WebAPI, private ea: EventAggregator) { }
 

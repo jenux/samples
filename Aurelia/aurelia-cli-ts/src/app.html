@@ -1,9 +1,10 @@
 <template>
   <require from="bootstrap/css/bootstrap.css"></require>
   <require from="./styles.css"></require>
-  <require from="./widgets/nav-bar/nav-bar"></require>
-  
+
+  <loading-indicator loading.bind="router.isNavigating || api.isRequesting"></loading-indicator>
+
   <nav-bar router.bind="router"></nav-bar>
+
   <router-view></router-view>
-  
 </template>

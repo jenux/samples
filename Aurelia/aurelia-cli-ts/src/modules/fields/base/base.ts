@@ -1,4 +1,4 @@
-export class FormFields {
+export class FieldBase {
   name: string;
   type: string;
   datatype: string;

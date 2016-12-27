@@ -6,7 +6,7 @@
     <li repeat.for="widget of widgets" class="au-animate">
       <compose
         model.bind="widget.model"
-        view-model="../../features/fields/${widget.type}/${widget.type}" class="col-md-11"></compose>
+        view-model="../../modules/fields/${widget.type}/${widget.type}" class="col-md-11"></compose>
       <i class="remove-widget fa fa-trash-o col-md-1 non-printable" click.trigger="$parent.removeWidget(widget)"></i>
     </li>
   </ul>

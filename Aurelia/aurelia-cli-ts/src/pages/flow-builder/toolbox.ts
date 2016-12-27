@@ -1,3 +1,3 @@
-export class Toolbox {
+export class FlowToolbox {
   
 }

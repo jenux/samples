@@ -1,6 +1,6 @@
-import {FormFields} from "../_classes/form-fields";
+import {FieldBase} from "../base/base";
 
-export class Textbox extends FormFields {
+export class Textbox extends FieldBase {
   type = 'textbox';
   name = 'Text box';
   icon = 'fa-font';
@@ -8,8 +8,6 @@ export class Textbox extends FormFields {
 
   activate(model) {
     this.text = model;
-
-    console.info('####')
     this.sayHello();
   }
 }

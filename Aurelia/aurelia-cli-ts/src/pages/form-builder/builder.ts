@@ -1,9 +1,8 @@
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 
-
 @inject(EventAggregator)
-export class Builder {
+export class FormBuilder {
   builderCanvas;
   widgets = [];
   widget = 'textbox';
@@ -22,7 +21,8 @@ export class Builder {
         name: "aaa",
         type: 'textbox',
         value: 'test'
-    })
+      }
+    });
   }
 
   removeWidget(widget) {

@@ -1,3 +1,3 @@
-export class Builder {
+export class FlowBuilder {
   
 }

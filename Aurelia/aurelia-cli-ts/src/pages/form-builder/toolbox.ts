@@ -2,12 +2,12 @@ import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 
 
-import {Textbox} from '../../features/fields/textbox/textbox';
-import {Header} from '../../features/fields/header/header';
+import {Textbox} from '../../modules/fields/textbox/textbox';
+import {Header} from '../../modules/fields/header/header';
 
 
 @inject(EventAggregator, Textbox, Header)
-export class Toolbox {
+export class FormToolbox {
 
   widgets;
 

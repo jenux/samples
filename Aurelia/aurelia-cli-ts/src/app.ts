@@ -12,10 +12,10 @@ export class App {
     config.title = 'Aurelia-cli-ts';
     config.map([
       { route: [''],          redirect: 'contacts' },
-      { route: 'contacts',    moduleId: './pages/contacts/contact-index', nav: true, title: 'Contacts'},
-      { route: 'projects',    moduleId: './pages/projects/project-index', nav: true, title: 'Projects'},
-      { route: 'flow-builder',moduleId: './pages/flow-builder/index',     nav: true, title: 'Flow Builder'},
-      { route: 'form-builder',moduleId: './pages/form-builder/index',     nav: true, title: 'Form Builder'}
+      { route: 'contacts',    moduleId: './pages/contacts/index',     nav: true, title: 'Contacts'},
+      { route: 'projects',    moduleId: './pages/projects/index',     nav: true, title: 'Projects'},
+      { route: 'flow-builder',moduleId: './pages/flow-builder/index', nav: true, title: 'Flow Builder'},
+      { route: 'form-builder',moduleId: './pages/form-builder/index', nav: true, title: 'Form Builder'}
     ]);
 
     this.router = router;
