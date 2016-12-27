@@ -1,0 +1,13 @@
+<template>
+  <input type="text" name="" value.bind="widget">
+  <input type="button" value="add" click.trigger="addWidget()">
+  <br>
+  <ul class="list-unstyled report" ref="builderCanvas">
+    <li repeat.for="widget of widgets" class="au-animate">
+      <compose
+        model.bind="widget.model"
+        view-model="../../features/fields/${widget.type}/${widget.type}" class="col-md-11"></compose>
+      <i class="remove-widget fa fa-trash-o col-md-1 non-printable" click.trigger="$parent.removeWidget(widget)"></i>
+    </li>
+  </ul>
+</template>
