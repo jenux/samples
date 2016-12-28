@@ -1,9 +1,10 @@
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
 
-
 import {Textbox} from '../../modules/fields/textbox/textbox';
 import {Header} from '../../modules/fields/header/header';
+
+//import "sortable";
 
 
 @inject(EventAggregator, Textbox, Header)

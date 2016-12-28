@@ -114,7 +114,13 @@
           "aurelia-task-queue",
           "aurelia-templating",
           "aurelia-templating-binding",
+          "aurelia-animator-css",
           "text",
+          {
+            "name": "sortable",
+            "path": "../node_modules/sortablejs",
+            "main": "Sortable.min"
+          },
           "jquery",
           {
             "name": "bootstrap",

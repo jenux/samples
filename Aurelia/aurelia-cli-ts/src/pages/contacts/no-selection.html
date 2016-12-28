@@ -1,7 +1,17 @@
 <template>
-  <require from='../../resources/elements/modal/modal'></require>
-  
   <div class="no-selection text-center">
     <h2>${message}</h2>
+    ${showing}
+    <select value.bind="showing">
+      <option value="">Select</option>
+      <option repeat.for="opt of options" 
+        model.bind="opt.id">${opt.text}</option>
+    </select>
   </div>
+
+  <modal showing.bind="showing">
+    <modal-header slot="modal-header" title="Name Goes Here" close.call="closeDialog()"></modal-header>
+    <modal-body slot="modal-body" content-view="${content}"></modal-body>
+    <modal-footer  slot="modal-footer" buttons.bind="['Cancel']"></modal-footer>
+  </modal>
 </template>

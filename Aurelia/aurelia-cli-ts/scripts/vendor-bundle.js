@@ -12439,6 +12439,51 @@ define('aurelia-event-aggregator',['exports', 'aurelia-logging'], function (expo
     config.instance(EventAggregator, includeEventsIn(config.aurelia));
   }
 });
+define('aurelia-history',['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+
+  
+
+  function mi(name) {
+    throw new Error('History must implement ' + name + '().');
+  }
+
+  var History = exports.History = function () {
+    function History() {
+      
+    }
+
+    History.prototype.activate = function activate(options) {
+      mi('activate');
+    };
+
+    History.prototype.deactivate = function deactivate() {
+      mi('deactivate');
+    };
+
+    History.prototype.getAbsoluteRoot = function getAbsoluteRoot() {
+      mi('getAbsoluteRoot');
+    };
+
+    History.prototype.navigate = function navigate(fragment, options) {
+      mi('navigate');
+    };
+
+    History.prototype.navigateBack = function navigateBack() {
+      mi('navigateBack');
+    };
+
+    History.prototype.setTitle = function setTitle(title) {
+      mi('setTitle');
+    };
+
+    return History;
+  }();
+});
 define('aurelia-framework',['exports', 'aurelia-dependency-injection', 'aurelia-binding', 'aurelia-metadata', 'aurelia-templating', 'aurelia-loader', 'aurelia-task-queue', 'aurelia-path', 'aurelia-pal', 'aurelia-logging'], function (exports, _aureliaDependencyInjection, _aureliaBinding, _aureliaMetadata, _aureliaTemplating, _aureliaLoader, _aureliaTaskQueue, _aureliaPath, _aureliaPal, _aureliaLogging) {
   'use strict';
 
@@ -12987,51 +13032,6 @@ define('aurelia-framework',['exports', 'aurelia-dependency-injection', 'aurelia-
 
   exports.FrameworkConfiguration = FrameworkConfiguration;
   var LogManager = exports.LogManager = TheLogManager;
-});
-define('aurelia-history',['exports'], function (exports) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-
-  
-
-  function mi(name) {
-    throw new Error('History must implement ' + name + '().');
-  }
-
-  var History = exports.History = function () {
-    function History() {
-      
-    }
-
-    History.prototype.activate = function activate(options) {
-      mi('activate');
-    };
-
-    History.prototype.deactivate = function deactivate() {
-      mi('deactivate');
-    };
-
-    History.prototype.getAbsoluteRoot = function getAbsoluteRoot() {
-      mi('getAbsoluteRoot');
-    };
-
-    History.prototype.navigate = function navigate(fragment, options) {
-      mi('navigate');
-    };
-
-    History.prototype.navigateBack = function navigateBack() {
-      mi('navigateBack');
-    };
-
-    History.prototype.setTitle = function setTitle(title) {
-      mi('setTitle');
-    };
-
-    return History;
-  }();
 });
 define('aurelia-history-browser',['exports', 'aurelia-pal', 'aurelia-history'], function (exports, _aureliaPal, _aureliaHistory) {
   'use strict';
@@ -13971,6 +13971,108 @@ define('aurelia-logging-console',['exports', 'aurelia-logging'], function (expor
     return ConsoleAppender;
   }();
 });
+define('aurelia-pal',['exports'], function (exports) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.AggregateError = AggregateError;
+  exports.initializePAL = initializePAL;
+  exports.reset = reset;
+  function AggregateError(message, innerError, skipIfAlreadyAggregate) {
+    if (innerError) {
+      if (innerError.innerError && skipIfAlreadyAggregate) {
+        return innerError;
+      }
+
+      var separator = '\n------------------------------------------------\n';
+
+      message += separator + 'Inner Error:\n';
+
+      if (typeof innerError === 'string') {
+        message += 'Message: ' + innerError;
+      } else {
+        if (innerError.message) {
+          message += 'Message: ' + innerError.message;
+        } else {
+          message += 'Unknown Inner Error Type. Displaying Inner Error as JSON:\n ' + JSON.stringify(innerError, null, '  ');
+        }
+
+        if (innerError.stack) {
+          message += '\nInner Error Stack:\n' + innerError.stack;
+          message += '\nEnd Inner Error Stack';
+        }
+      }
+
+      message += separator;
+    }
+
+    var e = new Error(message);
+    if (innerError) {
+      e.innerError = innerError;
+    }
+
+    return e;
+  }
+
+  var FEATURE = exports.FEATURE = {};
+
+  var PLATFORM = exports.PLATFORM = {
+    noop: function noop() {},
+    eachModule: function eachModule() {},
+    moduleName: function (_moduleName) {
+      function moduleName(_x) {
+        return _moduleName.apply(this, arguments);
+      }
+
+      moduleName.toString = function () {
+        return _moduleName.toString();
+      };
+
+      return moduleName;
+    }(function (moduleName) {
+      return moduleName;
+    })
+  };
+
+  PLATFORM.global = function () {
+    if (typeof self !== 'undefined') {
+      return self;
+    }
+
+    if (typeof global !== 'undefined') {
+      return global;
+    }
+
+    return new Function('return this')();
+  }();
+
+  var DOM = exports.DOM = {};
+  var isInitialized = exports.isInitialized = false;
+  function initializePAL(callback) {
+    if (isInitialized) {
+      return;
+    }
+    exports.isInitialized = isInitialized = true;
+    if (typeof Object.getPropertyDescriptor !== 'function') {
+      Object.getPropertyDescriptor = function (subject, name) {
+        var pd = Object.getOwnPropertyDescriptor(subject, name);
+        var proto = Object.getPrototypeOf(subject);
+        while (typeof pd === 'undefined' && proto !== null) {
+          pd = Object.getOwnPropertyDescriptor(proto, name);
+          proto = Object.getPrototypeOf(proto);
+        }
+        return pd;
+      };
+    }
+
+    callback(PLATFORM, FEATURE, DOM);
+  }
+  function reset() {
+    exports.isInitialized = isInitialized = false;
+  }
+});
 define('aurelia-metadata',['exports', 'aurelia-pal'], function (exports, _aureliaPal) {
   'use strict';
 
@@ -14250,108 +14352,6 @@ define('aurelia-metadata',['exports', 'aurelia-pal'], function (exports, _aureli
 
     return result;
   };
-});
-define('aurelia-pal',['exports'], function (exports) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.AggregateError = AggregateError;
-  exports.initializePAL = initializePAL;
-  exports.reset = reset;
-  function AggregateError(message, innerError, skipIfAlreadyAggregate) {
-    if (innerError) {
-      if (innerError.innerError && skipIfAlreadyAggregate) {
-        return innerError;
-      }
-
-      var separator = '\n------------------------------------------------\n';
-
-      message += separator + 'Inner Error:\n';
-
-      if (typeof innerError === 'string') {
-        message += 'Message: ' + innerError;
-      } else {
-        if (innerError.message) {
-          message += 'Message: ' + innerError.message;
-        } else {
-          message += 'Unknown Inner Error Type. Displaying Inner Error as JSON:\n ' + JSON.stringify(innerError, null, '  ');
-        }
-
-        if (innerError.stack) {
-          message += '\nInner Error Stack:\n' + innerError.stack;
-          message += '\nEnd Inner Error Stack';
-        }
-      }
-
-      message += separator;
-    }
-
-    var e = new Error(message);
-    if (innerError) {
-      e.innerError = innerError;
-    }
-
-    return e;
-  }
-
-  var FEATURE = exports.FEATURE = {};
-
-  var PLATFORM = exports.PLATFORM = {
-    noop: function noop() {},
-    eachModule: function eachModule() {},
-    moduleName: function (_moduleName) {
-      function moduleName(_x) {
-        return _moduleName.apply(this, arguments);
-      }
-
-      moduleName.toString = function () {
-        return _moduleName.toString();
-      };
-
-      return moduleName;
-    }(function (moduleName) {
-      return moduleName;
-    })
-  };
-
-  PLATFORM.global = function () {
-    if (typeof self !== 'undefined') {
-      return self;
-    }
-
-    if (typeof global !== 'undefined') {
-      return global;
-    }
-
-    return new Function('return this')();
-  }();
-
-  var DOM = exports.DOM = {};
-  var isInitialized = exports.isInitialized = false;
-  function initializePAL(callback) {
-    if (isInitialized) {
-      return;
-    }
-    exports.isInitialized = isInitialized = true;
-    if (typeof Object.getPropertyDescriptor !== 'function') {
-      Object.getPropertyDescriptor = function (subject, name) {
-        var pd = Object.getOwnPropertyDescriptor(subject, name);
-        var proto = Object.getPrototypeOf(subject);
-        while (typeof pd === 'undefined' && proto !== null) {
-          pd = Object.getOwnPropertyDescriptor(proto, name);
-          proto = Object.getPrototypeOf(proto);
-        }
-        return pd;
-      };
-    }
-
-    callback(PLATFORM, FEATURE, DOM);
-  }
-  function reset() {
-    exports.isInitialized = isInitialized = false;
-  }
 });
 define('aurelia-pal-browser',['exports', 'aurelia-pal'], function (exports, _aureliaPal) {
   'use strict';
@@ -16404,154 +16404,6 @@ define('aurelia-route-recognizer',['exports', 'aurelia-path'], function (exports
     return state;
   }
 });
-define('aurelia-task-queue',['exports', 'aurelia-pal'], function (exports, _aureliaPal) {
-  'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
-  exports.TaskQueue = undefined;
-
-  
-
-  var hasSetImmediate = typeof setImmediate === 'function';
-
-  function makeRequestFlushFromMutationObserver(flush) {
-    var toggle = 1;
-    var observer = _aureliaPal.DOM.createMutationObserver(flush);
-    var node = _aureliaPal.DOM.createTextNode('');
-    observer.observe(node, { characterData: true });
-    return function requestFlush() {
-      toggle = -toggle;
-      node.data = toggle;
-    };
-  }
-
-  function makeRequestFlushFromTimer(flush) {
-    return function requestFlush() {
-      var timeoutHandle = setTimeout(handleFlushTimer, 0);
-
-      var intervalHandle = setInterval(handleFlushTimer, 50);
-      function handleFlushTimer() {
-        clearTimeout(timeoutHandle);
-        clearInterval(intervalHandle);
-        flush();
-      }
-    };
-  }
-
-  function onError(error, task) {
-    if ('onError' in task) {
-      task.onError(error);
-    } else if (hasSetImmediate) {
-      setImmediate(function () {
-        throw error;
-      });
-    } else {
-      setTimeout(function () {
-        throw error;
-      }, 0);
-    }
-  }
-
-  var TaskQueue = exports.TaskQueue = function () {
-    function TaskQueue() {
-      var _this = this;
-
-      
-
-      this.flushing = false;
-
-      this.microTaskQueue = [];
-      this.microTaskQueueCapacity = 1024;
-      this.taskQueue = [];
-
-      if (_aureliaPal.FEATURE.mutationObserver) {
-        this.requestFlushMicroTaskQueue = makeRequestFlushFromMutationObserver(function () {
-          return _this.flushMicroTaskQueue();
-        });
-      } else {
-        this.requestFlushMicroTaskQueue = makeRequestFlushFromTimer(function () {
-          return _this.flushMicroTaskQueue();
-        });
-      }
-
-      this.requestFlushTaskQueue = makeRequestFlushFromTimer(function () {
-        return _this.flushTaskQueue();
-      });
-    }
-
-    TaskQueue.prototype.queueMicroTask = function queueMicroTask(task) {
-      if (this.microTaskQueue.length < 1) {
-        this.requestFlushMicroTaskQueue();
-      }
-
-      this.microTaskQueue.push(task);
-    };
-
-    TaskQueue.prototype.queueTask = function queueTask(task) {
-      if (this.taskQueue.length < 1) {
-        this.requestFlushTaskQueue();
-      }
-
-      this.taskQueue.push(task);
-    };
-
-    TaskQueue.prototype.flushTaskQueue = function flushTaskQueue() {
-      var queue = this.taskQueue;
-      var index = 0;
-      var task = void 0;
-
-      this.taskQueue = [];
-
-      try {
-        this.flushing = true;
-        while (index < queue.length) {
-          task = queue[index];
-          task.call();
-          index++;
-        }
-      } catch (error) {
-        onError(error, task);
-      } finally {
-        this.flushing = false;
-      }
-    };
-
-    TaskQueue.prototype.flushMicroTaskQueue = function flushMicroTaskQueue() {
-      var queue = this.microTaskQueue;
-      var capacity = this.microTaskQueueCapacity;
-      var index = 0;
-      var task = void 0;
-
-      try {
-        this.flushing = true;
-        while (index < queue.length) {
-          task = queue[index];
-          task.call();
-          index++;
-
-          if (index > capacity) {
-            for (var scan = 0, newLength = queue.length - index; scan < newLength; scan++) {
-              queue[scan] = queue[scan + index];
-            }
-
-            queue.length -= index;
-            index = 0;
-          }
-        }
-      } catch (error) {
-        onError(error, task);
-      } finally {
-        this.flushing = false;
-      }
-
-      queue.length = 0;
-    };
-
-    return TaskQueue;
-  }();
-});
 define('aurelia-router',['exports', 'aurelia-logging', 'aurelia-route-recognizer', 'aurelia-dependency-injection', 'aurelia-history', 'aurelia-event-aggregator'], function (exports, _aureliaLogging, _aureliaRouteRecognizer, _aureliaDependencyInjection, _aureliaHistory, _aureliaEventAggregator) {
   'use strict';
 
@@ -18408,6 +18260,154 @@ define('aurelia-router',['exports', 'aurelia-logging', 'aurelia-route-recognizer
       logger.error('Router navigation failed, and no previous location or fallbackRoute could be restored.');
     }
   }
+});
+define('aurelia-task-queue',['exports', 'aurelia-pal'], function (exports, _aureliaPal) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.TaskQueue = undefined;
+
+  
+
+  var hasSetImmediate = typeof setImmediate === 'function';
+
+  function makeRequestFlushFromMutationObserver(flush) {
+    var toggle = 1;
+    var observer = _aureliaPal.DOM.createMutationObserver(flush);
+    var node = _aureliaPal.DOM.createTextNode('');
+    observer.observe(node, { characterData: true });
+    return function requestFlush() {
+      toggle = -toggle;
+      node.data = toggle;
+    };
+  }
+
+  function makeRequestFlushFromTimer(flush) {
+    return function requestFlush() {
+      var timeoutHandle = setTimeout(handleFlushTimer, 0);
+
+      var intervalHandle = setInterval(handleFlushTimer, 50);
+      function handleFlushTimer() {
+        clearTimeout(timeoutHandle);
+        clearInterval(intervalHandle);
+        flush();
+      }
+    };
+  }
+
+  function onError(error, task) {
+    if ('onError' in task) {
+      task.onError(error);
+    } else if (hasSetImmediate) {
+      setImmediate(function () {
+        throw error;
+      });
+    } else {
+      setTimeout(function () {
+        throw error;
+      }, 0);
+    }
+  }
+
+  var TaskQueue = exports.TaskQueue = function () {
+    function TaskQueue() {
+      var _this = this;
+
+      
+
+      this.flushing = false;
+
+      this.microTaskQueue = [];
+      this.microTaskQueueCapacity = 1024;
+      this.taskQueue = [];
+
+      if (_aureliaPal.FEATURE.mutationObserver) {
+        this.requestFlushMicroTaskQueue = makeRequestFlushFromMutationObserver(function () {
+          return _this.flushMicroTaskQueue();
+        });
+      } else {
+        this.requestFlushMicroTaskQueue = makeRequestFlushFromTimer(function () {
+          return _this.flushMicroTaskQueue();
+        });
+      }
+
+      this.requestFlushTaskQueue = makeRequestFlushFromTimer(function () {
+        return _this.flushTaskQueue();
+      });
+    }
+
+    TaskQueue.prototype.queueMicroTask = function queueMicroTask(task) {
+      if (this.microTaskQueue.length < 1) {
+        this.requestFlushMicroTaskQueue();
+      }
+
+      this.microTaskQueue.push(task);
+    };
+
+    TaskQueue.prototype.queueTask = function queueTask(task) {
+      if (this.taskQueue.length < 1) {
+        this.requestFlushTaskQueue();
+      }
+
+      this.taskQueue.push(task);
+    };
+
+    TaskQueue.prototype.flushTaskQueue = function flushTaskQueue() {
+      var queue = this.taskQueue;
+      var index = 0;
+      var task = void 0;
+
+      this.taskQueue = [];
+
+      try {
+        this.flushing = true;
+        while (index < queue.length) {
+          task = queue[index];
+          task.call();
+          index++;
+        }
+      } catch (error) {
+        onError(error, task);
+      } finally {
+        this.flushing = false;
+      }
+    };
+
+    TaskQueue.prototype.flushMicroTaskQueue = function flushMicroTaskQueue() {
+      var queue = this.microTaskQueue;
+      var capacity = this.microTaskQueueCapacity;
+      var index = 0;
+      var task = void 0;
+
+      try {
+        this.flushing = true;
+        while (index < queue.length) {
+          task = queue[index];
+          task.call();
+          index++;
+
+          if (index > capacity) {
+            for (var scan = 0, newLength = queue.length - index; scan < newLength; scan++) {
+              queue[scan] = queue[scan + index];
+            }
+
+            queue.length -= index;
+            index = 0;
+          }
+        }
+      } catch (error) {
+        onError(error, task);
+      } finally {
+        this.flushing = false;
+      }
+
+      queue.length = 0;
+    };
+
+    return TaskQueue;
+  }();
 });
 define('aurelia-templating',['exports', 'aurelia-logging', 'aurelia-metadata', 'aurelia-pal', 'aurelia-path', 'aurelia-loader', 'aurelia-dependency-injection', 'aurelia-binding', 'aurelia-task-queue'], function (exports, _aureliaLogging, _aureliaMetadata, _aureliaPal, _aureliaPath, _aureliaLoader, _aureliaDependencyInjection, _aureliaBinding, _aureliaTaskQueue) {
   'use strict';
@@ -23207,7 +23207,6 @@ define('aurelia-templating',['exports', 'aurelia-logging', 'aurelia-metadata', '
     return TemplatingEngine;
   }()) || _class23);
 });
-define('text',{});
 define('aurelia-templating-binding',['exports', 'aurelia-logging', 'aurelia-binding', 'aurelia-templating'], function (exports, _aureliaLogging, _aureliaBinding, _aureliaTemplating) {
   'use strict';
 
@@ -23878,6 +23877,510 @@ define('aurelia-templating-binding',['exports', 'aurelia-logging', 'aurelia-bind
     config.container.registerAlias(_aureliaTemplating.BindingLanguage, TemplatingBindingLanguage);
   }
 });
+define('aurelia-animator-css',['exports', 'aurelia-templating', 'aurelia-pal'], function (exports, _aureliaTemplating, _aureliaPal) {
+  'use strict';
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.CssAnimator = undefined;
+  exports.configure = configure;
+
+  
+
+  var CssAnimator = exports.CssAnimator = function () {
+    function CssAnimator() {
+      
+
+      this.useAnimationDoneClasses = false;
+      this.animationEnteredClass = 'au-entered';
+      this.animationLeftClass = 'au-left';
+      this.isAnimating = false;
+
+      this.verifyKeyframesExist = true;
+    }
+
+    CssAnimator.prototype._addMultipleEventListener = function _addMultipleEventListener(el, s, fn) {
+      var evts = s.split(' ');
+      for (var i = 0, ii = evts.length; i < ii; ++i) {
+        el.addEventListener(evts[i], fn, false);
+      }
+    };
+
+    CssAnimator.prototype._removeMultipleEventListener = function _removeMultipleEventListener(el, s, fn) {
+      var evts = s.split(' ');
+      for (var i = 0, ii = evts.length; i < ii; ++i) {
+        el.removeEventListener(evts[i], fn, false);
+      }
+    };
+
+    CssAnimator.prototype._getElementAnimationDelay = function _getElementAnimationDelay(element) {
+      var styl = _aureliaPal.DOM.getComputedStyle(element);
+      var prop = void 0;
+      var delay = void 0;
+
+      if (styl.getPropertyValue('animation-delay')) {
+        prop = 'animation-delay';
+      } else if (styl.getPropertyValue('-webkit-animation-delay')) {
+        prop = '-webkit-animation-delay';
+      } else if (styl.getPropertyValue('-moz-animation-delay')) {
+        prop = '-moz-animation-delay';
+      } else {
+        return 0;
+      }
+
+      delay = styl.getPropertyValue(prop);
+      delay = Number(delay.replace(/[^\d\.]/g, ''));
+
+      return delay * 1000;
+    };
+
+    CssAnimator.prototype._getElementAnimationNames = function _getElementAnimationNames(element) {
+      var styl = _aureliaPal.DOM.getComputedStyle(element);
+      var prefix = void 0;
+
+      if (styl.getPropertyValue('animation-name')) {
+        prefix = '';
+      } else if (styl.getPropertyValue('-webkit-animation-name')) {
+        prefix = '-webkit-';
+      } else if (styl.getPropertyValue('-moz-animation-name')) {
+        prefix = '-moz-';
+      } else {
+        return [];
+      }
+
+      var animationNames = styl.getPropertyValue(prefix + 'animation-name');
+      return animationNames ? animationNames.split(' ') : [];
+    };
+
+    CssAnimator.prototype._performSingleAnimate = function _performSingleAnimate(element, className) {
+      var _this = this;
+
+      this._triggerDOMEvent(_aureliaTemplating.animationEvent.animateBegin, element);
+
+      return this.addClass(element, className, true).then(function (result) {
+        _this._triggerDOMEvent(_aureliaTemplating.animationEvent.animateActive, element);
+
+        if (result !== false) {
+          return _this.removeClass(element, className, true).then(function () {
+            _this._triggerDOMEvent(_aureliaTemplating.animationEvent.animateDone, element);
+          });
+        }
+
+        return false;
+      }).catch(function () {
+        _this._triggerDOMEvent(_aureliaTemplating.animationEvent.animateTimeout, element);
+      });
+    };
+
+    CssAnimator.prototype._triggerDOMEvent = function _triggerDOMEvent(eventType, element) {
+      var evt = _aureliaPal.DOM.createCustomEvent(eventType, { bubbles: true, cancelable: true, detail: element });
+      _aureliaPal.DOM.dispatchEvent(evt);
+    };
+
+    CssAnimator.prototype._animationChangeWithValidKeyframe = function _animationChangeWithValidKeyframe(animationNames, prevAnimationNames) {
+      var newAnimationNames = animationNames.filter(function (name) {
+        return prevAnimationNames.indexOf(name) === -1;
+      });
+
+      if (newAnimationNames.length === 0) {
+        return false;
+      }
+
+      if (!this.verifyKeyframesExist) {
+        return true;
+      }
+
+      var keyframesRuleType = window.CSSRule.KEYFRAMES_RULE || window.CSSRule.MOZ_KEYFRAMES_RULE || window.CSSRule.WEBKIT_KEYFRAMES_RULE;
+
+      var styleSheets = document.styleSheets;
+
+      try {
+        for (var i = 0; i < styleSheets.length; ++i) {
+          var cssRules = null;
+
+          try {
+            cssRules = styleSheets[i].cssRules;
+          } catch (e) {}
+
+          if (!cssRules) {
+            continue;
+          }
+
+          for (var j = 0; j < cssRules.length; ++j) {
+            var cssRule = cssRules[j];
+
+            if (cssRule.type === keyframesRuleType) {
+              if (newAnimationNames.indexOf(cssRule.name) !== -1) {
+                return true;
+              }
+            }
+          }
+        }
+      } catch (e) {}
+
+      return false;
+    };
+
+    CssAnimator.prototype.animate = function animate(element, className) {
+      var _this2 = this;
+
+      if (Array.isArray(element)) {
+        return Promise.all(element.map(function (el) {
+          return _this2._performSingleAnimate(el, className);
+        }));
+      }
+
+      return this._performSingleAnimate(element, className);
+    };
+
+    CssAnimator.prototype.runSequence = function runSequence(animations) {
+      var _this3 = this;
+
+      this._triggerDOMEvent(_aureliaTemplating.animationEvent.sequenceBegin, null);
+
+      return animations.reduce(function (p, anim) {
+        return p.then(function () {
+          return _this3.animate(anim.element, anim.className);
+        });
+      }, Promise.resolve(true)).then(function () {
+        _this3._triggerDOMEvent(_aureliaTemplating.animationEvent.sequenceDone, null);
+      });
+    };
+
+    CssAnimator.prototype.enter = function enter(element) {
+      var _this4 = this;
+
+      return new Promise(function (resolve, reject) {
+        var classList = element.classList;
+
+        _this4._triggerDOMEvent(_aureliaTemplating.animationEvent.enterBegin, element);
+
+        if (_this4.useAnimationDoneClasses) {
+          classList.remove(_this4.animationEnteredClass);
+          classList.remove(_this4.animationLeftClass);
+        }
+
+        classList.add('au-enter');
+        var prevAnimationNames = _this4._getElementAnimationNames(element);
+
+        var _animStart = void 0;
+        var animHasStarted = false;
+        _this4._addMultipleEventListener(element, 'webkitAnimationStart animationstart', _animStart = function animStart(evAnimStart) {
+          animHasStarted = true;
+          _this4.isAnimating = true;
+
+          _this4._triggerDOMEvent(_aureliaTemplating.animationEvent.enterActive, element);
+
+          evAnimStart.stopPropagation();
+
+          evAnimStart.target.removeEventListener(evAnimStart.type, _animStart);
+        }, false);
+
+        var _animEnd = void 0;
+        _this4._addMultipleEventListener(element, 'webkitAnimationEnd animationend', _animEnd = function animEnd(evAnimEnd) {
+          if (!animHasStarted) {
+            return;
+          }
+
+          evAnimEnd.stopPropagation();
+
+          classList.remove('au-enter-active');
+          classList.remove('au-enter');
+
+          evAnimEnd.target.removeEventListener(evAnimEnd.type, _animEnd);
+
+          if (_this4.useAnimationDoneClasses && _this4.animationEnteredClass !== undefined && _this4.animationEnteredClass !== null) {
+            classList.add(_this4.animationEnteredClass);
+          }
+
+          _this4.isAnimating = false;
+          _this4._triggerDOMEvent(_aureliaTemplating.animationEvent.enterDone, element);
+
+          resolve(true);
+        }, false);
+
+        var parent = element.parentElement;
+        var delay = 0;
+
+        var cleanupAnimation = function cleanupAnimation() {
+          var animationNames = _this4._getElementAnimationNames(element);
+          if (!_this4._animationChangeWithValidKeyframe(animationNames, prevAnimationNames)) {
+            classList.remove('au-enter-active');
+            classList.remove('au-enter');
+
+            _this4._removeMultipleEventListener(element, 'webkitAnimationEnd animationend', _animEnd);
+            _this4._removeMultipleEventListener(element, 'webkitAnimationStart animationstart', _animStart);
+
+            _this4._triggerDOMEvent(_aureliaTemplating.animationEvent.enterTimeout, element);
+            resolve(false);
+          }
+        };
+
+        if (parent !== null && parent !== undefined && (parent.classList.contains('au-stagger') || parent.classList.contains('au-stagger-enter'))) {
+          var elemPos = Array.prototype.indexOf.call(parent.children, element);
+          delay = _this4._getElementAnimationDelay(parent) * elemPos;
+
+          _this4._triggerDOMEvent(_aureliaTemplating.animationEvent.staggerNext, element);
+
+          setTimeout(function () {
+            classList.add('au-enter-active');
+            cleanupAnimation();
+          }, delay);
+        } else {
+          classList.add('au-enter-active');
+          cleanupAnimation();
+        }
+      });
+    };
+
+    CssAnimator.prototype.leave = function leave(element) {
+      var _this5 = this;
+
+      return new Promise(function (resolve, reject) {
+        var classList = element.classList;
+
+        _this5._triggerDOMEvent(_aureliaTemplating.animationEvent.leaveBegin, element);
+
+        if (_this5.useAnimationDoneClasses) {
+          classList.remove(_this5.animationEnteredClass);
+          classList.remove(_this5.animationLeftClass);
+        }
+
+        classList.add('au-leave');
+        var prevAnimationNames = _this5._getElementAnimationNames(element);
+
+        var _animStart2 = void 0;
+        var animHasStarted = false;
+        _this5._addMultipleEventListener(element, 'webkitAnimationStart animationstart', _animStart2 = function animStart(evAnimStart) {
+          animHasStarted = true;
+          _this5.isAnimating = true;
+
+          _this5._triggerDOMEvent(_aureliaTemplating.animationEvent.leaveActive, element);
+
+          evAnimStart.stopPropagation();
+
+          evAnimStart.target.removeEventListener(evAnimStart.type, _animStart2);
+        }, false);
+
+        var _animEnd2 = void 0;
+        _this5._addMultipleEventListener(element, 'webkitAnimationEnd animationend', _animEnd2 = function animEnd(evAnimEnd) {
+          if (!animHasStarted) {
+            return;
+          }
+
+          evAnimEnd.stopPropagation();
+
+          classList.remove('au-leave-active');
+          classList.remove('au-leave');
+
+          evAnimEnd.target.removeEventListener(evAnimEnd.type, _animEnd2);
+
+          if (_this5.useAnimationDoneClasses && _this5.animationLeftClass !== undefined && _this5.animationLeftClass !== null) {
+            classList.add(_this5.animationLeftClass);
+          }
+
+          _this5.isAnimating = false;
+          _this5._triggerDOMEvent(_aureliaTemplating.animationEvent.leaveDone, element);
+
+          resolve(true);
+        }, false);
+
+        var parent = element.parentElement;
+        var delay = 0;
+
+        var cleanupAnimation = function cleanupAnimation() {
+          var animationNames = _this5._getElementAnimationNames(element);
+          if (!_this5._animationChangeWithValidKeyframe(animationNames, prevAnimationNames)) {
+            classList.remove('au-leave-active');
+            classList.remove('au-leave');
+
+            _this5._removeMultipleEventListener(element, 'webkitAnimationEnd animationend', _animEnd2);
+            _this5._removeMultipleEventListener(element, 'webkitAnimationStart animationstart', _animStart2);
+
+            _this5._triggerDOMEvent(_aureliaTemplating.animationEvent.leaveTimeout, element);
+            resolve(false);
+          }
+        };
+
+        if (parent !== null && parent !== undefined && (parent.classList.contains('au-stagger') || parent.classList.contains('au-stagger-leave'))) {
+          var elemPos = Array.prototype.indexOf.call(parent.children, element);
+          delay = _this5._getElementAnimationDelay(parent) * elemPos;
+
+          _this5._triggerDOMEvent(_aureliaTemplating.animationEvent.staggerNext, element);
+
+          setTimeout(function () {
+            classList.add('au-leave-active');
+            cleanupAnimation();
+          }, delay);
+        } else {
+          classList.add('au-leave-active');
+          cleanupAnimation();
+        }
+      });
+    };
+
+    CssAnimator.prototype.removeClass = function removeClass(element, className) {
+      var _this6 = this;
+
+      var suppressEvents = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+
+      return new Promise(function (resolve, reject) {
+        var classList = element.classList;
+
+        if (!classList.contains(className) && !classList.contains(className + '-add')) {
+          resolve(false);
+          return;
+        }
+
+        if (suppressEvents !== true) {
+          _this6._triggerDOMEvent(_aureliaTemplating.animationEvent.removeClassBegin, element);
+        }
+
+        classList.remove(className);
+        var prevAnimationNames = _this6._getElementAnimationNames(element);
+
+        var _animStart3 = void 0;
+        var animHasStarted = false;
+        _this6._addMultipleEventListener(element, 'webkitAnimationStart animationstart', _animStart3 = function animStart(evAnimStart) {
+          animHasStarted = true;
+          _this6.isAnimating = true;
+
+          if (suppressEvents !== true) {
+            _this6._triggerDOMEvent(_aureliaTemplating.animationEvent.removeClassActive, element);
+          }
+
+          evAnimStart.stopPropagation();
+
+          evAnimStart.target.removeEventListener(evAnimStart.type, _animStart3);
+        }, false);
+
+        var _animEnd3 = void 0;
+        _this6._addMultipleEventListener(element, 'webkitAnimationEnd animationend', _animEnd3 = function animEnd(evAnimEnd) {
+          if (!animHasStarted) {
+            return;
+          }
+
+          evAnimEnd.stopPropagation();
+
+          classList.remove(className + '-remove');
+
+          evAnimEnd.target.removeEventListener(evAnimEnd.type, _animEnd3);
+
+          _this6.isAnimating = false;
+
+          if (suppressEvents !== true) {
+            _this6._triggerDOMEvent(_aureliaTemplating.animationEvent.removeClassDone, element);
+          }
+
+          resolve(true);
+        }, false);
+
+        classList.add(className + '-remove');
+
+        var animationNames = _this6._getElementAnimationNames(element);
+        if (!_this6._animationChangeWithValidKeyframe(animationNames, prevAnimationNames)) {
+          classList.remove(className + '-remove');
+          classList.remove(className);
+
+          _this6._removeMultipleEventListener(element, 'webkitAnimationEnd animationend', _animEnd3);
+          _this6._removeMultipleEventListener(element, 'webkitAnimationStart animationstart', _animStart3);
+
+          if (suppressEvents !== true) {
+            _this6._triggerDOMEvent(_aureliaTemplating.animationEvent.removeClassTimeout, element);
+          }
+
+          resolve(false);
+        }
+      });
+    };
+
+    CssAnimator.prototype.addClass = function addClass(element, className) {
+      var _this7 = this;
+
+      var suppressEvents = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+
+      return new Promise(function (resolve, reject) {
+        var classList = element.classList;
+
+        if (suppressEvents !== true) {
+          _this7._triggerDOMEvent(_aureliaTemplating.animationEvent.addClassBegin, element);
+        }
+
+        var _animStart4 = void 0;
+        var animHasStarted = false;
+        _this7._addMultipleEventListener(element, 'webkitAnimationStart animationstart', _animStart4 = function animStart(evAnimStart) {
+          animHasStarted = true;
+          _this7.isAnimating = true;
+
+          if (suppressEvents !== true) {
+            _this7._triggerDOMEvent(_aureliaTemplating.animationEvent.addClassActive, element);
+          }
+
+          evAnimStart.stopPropagation();
+
+          evAnimStart.target.removeEventListener(evAnimStart.type, _animStart4);
+        }, false);
+
+        var _animEnd4 = void 0;
+        _this7._addMultipleEventListener(element, 'webkitAnimationEnd animationend', _animEnd4 = function animEnd(evAnimEnd) {
+          if (!animHasStarted) {
+            return;
+          }
+
+          evAnimEnd.stopPropagation();
+
+          classList.add(className);
+
+          classList.remove(className + '-add');
+
+          evAnimEnd.target.removeEventListener(evAnimEnd.type, _animEnd4);
+
+          _this7.isAnimating = false;
+
+          if (suppressEvents !== true) {
+            _this7._triggerDOMEvent(_aureliaTemplating.animationEvent.addClassDone, element);
+          }
+
+          resolve(true);
+        }, false);
+
+        var prevAnimationNames = _this7._getElementAnimationNames(element);
+
+        classList.add(className + '-add');
+
+        var animationNames = _this7._getElementAnimationNames(element);
+        if (!_this7._animationChangeWithValidKeyframe(animationNames, prevAnimationNames)) {
+          classList.remove(className + '-add');
+          classList.add(className);
+
+          _this7._removeMultipleEventListener(element, 'webkitAnimationEnd animationend', _animEnd4);
+          _this7._removeMultipleEventListener(element, 'webkitAnimationStart animationstart', _animStart4);
+
+          if (suppressEvents !== true) {
+            _this7._triggerDOMEvent(_aureliaTemplating.animationEvent.addClassTimeout, element);
+          }
+
+          resolve(false);
+        }
+      });
+    };
+
+    return CssAnimator;
+  }();
+
+  function configure(config, callback) {
+    var animator = config.container.get(CssAnimator);
+    config.container.get(_aureliaTemplating.TemplatingEngine).configureAnimator(animator);
+    if (typeof callback === 'function') {
+      callback(animator);
+    }
+  }
+});
+define('text',{});
+/*! Sortable 1.5.0-rc1 - MIT | git://github.com/rubaxa/Sortable.git */
+!function(a){"use strict";"function"==typeof define&&define.amd?define('sortable/Sortable.min',a):"undefined"!=typeof module&&"undefined"!=typeof module.exports?module.exports=a():"undefined"!=typeof Package?Sortable=a():window.Sortable=a()}(function(){"use strict";function a(a,b){if(!a||!a.nodeType||1!==a.nodeType)throw"Sortable: `el` must be HTMLElement, and not "+{}.toString.call(a);this.el=a,this.options=b=t({},b),a[Q]=this;var c={group:Math.random(),sort:!0,disabled:!1,store:null,handle:null,scroll:!0,scrollSensitivity:30,scrollSpeed:10,draggable:/[uo]l/i.test(a.nodeName)?"li":">*",ghostClass:"sortable-ghost",chosenClass:"sortable-chosen",dragClass:"sortable-drag",ignore:"a, img",filter:null,animation:0,setData:function(a,b){a.setData("Text",b.textContent)},dropBubble:!1,dragoverBubble:!1,dataIdAttr:"data-id",delay:0,forceFallback:!1,fallbackClass:"sortable-fallback",fallbackOnBody:!1,fallbackTolerance:0,fallbackOffset:{x:0,y:0}};for(var d in c)!(d in b)&&(b[d]=c[d]);ba(b);for(var e in this)"_"===e.charAt(0)&&"function"==typeof this[e]&&(this[e]=this[e].bind(this));this.nativeDraggable=!b.forceFallback&&W,f(a,"mousedown",this._onTapStart),f(a,"touchstart",this._onTapStart),f(a,"pointerdown",this._onTapStart),this.nativeDraggable&&(f(a,"dragover",this),f(a,"dragenter",this)),_.push(this._onDragOver),b.store&&this.sort(b.store.get(this))}function b(a){y&&y.state!==a&&(i(y,"display",a?"none":""),!a&&y.state&&z.insertBefore(y,v),y.state=a)}function c(a,b,c){if(a){c=c||S;do if(">*"===b&&a.parentNode===c||r(a,b))return a;while(a=d(a))}return null}function d(a){var b=a.host;return b&&b.nodeType?b:a.parentNode}function e(a){a.dataTransfer&&(a.dataTransfer.dropEffect="move"),a.preventDefault()}function f(a,b,c){a.addEventListener(b,c,!1)}function g(a,b,c){a.removeEventListener(b,c,!1)}function h(a,b,c){if(a)if(a.classList)a.classList[c?"add":"remove"](b);else{var d=(" "+a.className+" ").replace(P," ").replace(" "+b+" "," ");a.className=(d+(c?" "+b:"")).replace(P," ")}}function i(a,b,c){var d=a&&a.style;if(d){if(void 0===c)return S.defaultView&&S.defaultView.getComputedStyle?c=S.defaultView.getComputedStyle(a,""):a.currentStyle&&(c=a.currentStyle),void 0===b?c:c[b];b in d||(b="-webkit-"+b),d[b]=c+("string"==typeof c?"":"px")}}function j(a,b,c){if(a){var d=a.getElementsByTagName(b),e=0,f=d.length;if(c)for(;e<f;e++)c(d[e],e);return d}return[]}function k(a,b,c,d,e,f,g){a=a||b[Q];var h=S.createEvent("Event"),i=a.options,j="on"+c.charAt(0).toUpperCase()+c.substr(1);h.initEvent(c,!0,!0),h.to=b,h.from=e||b,h.item=d||b,h.clone=y,h.oldIndex=f,h.newIndex=g,b.dispatchEvent(h),i[j]&&i[j].call(a,h)}function l(a,b,c,d,e,f,g){var h,i,j=a[Q],k=j.options.onMove;return h=S.createEvent("Event"),h.initEvent("move",!0,!0),h.to=b,h.from=a,h.dragged=c,h.draggedRect=d,h.related=e||b,h.relatedRect=f||b.getBoundingClientRect(),a.dispatchEvent(h),k&&(i=k.call(j,h,g)),i}function m(a){a.draggable=!1}function n(){Y=!1}function o(a,b){var c=a.lastElementChild,d=c.getBoundingClientRect();return(b.clientY-(d.top+d.height)>5||b.clientX-(d.right+d.width)>5)&&c}function p(a){for(var b=a.tagName+a.className+a.src+a.href+a.textContent,c=b.length,d=0;c--;)d+=b.charCodeAt(c);return d.toString(36)}function q(a,b){var c=0;if(!a||!a.parentNode)return-1;for(;a&&(a=a.previousElementSibling);)"TEMPLATE"===a.nodeName.toUpperCase()||">*"!==b&&!r(a,b)||c++;return c}function r(a,b){if(a){b=b.split(".");var c=b.shift().toUpperCase(),d=new RegExp("\\s("+b.join("|")+")(?=\\s)","g");return!(""!==c&&a.nodeName.toUpperCase()!=c||b.length&&((" "+a.className+" ").match(d)||[]).length!=b.length)}return!1}function s(a,b){var c,d;return function(){void 0===c&&(c=arguments,d=this,setTimeout(function(){1===c.length?a.call(d,c[0]):a.apply(d,c),c=void 0},b))}}function t(a,b){if(a&&b)for(var c in b)b.hasOwnProperty(c)&&(a[c]=b[c]);return a}function u(a){return U?U(a).clone(!0)[0]:V&&V.dom?V.dom(a).cloneNode(!0):a.cloneNode(!0)}if("undefined"==typeof window||!window.document)return function(){throw new Error("Sortable.js requires a window with a document")};var v,w,x,y,z,A,B,C,D,E,F,G,H,I,J,K,L,M,N,O={},P=/\s+/g,Q="Sortable"+(new Date).getTime(),R=window,S=R.document,T=R.parseInt,U=R.jQuery||R.Zepto,V=R.Polymer,W=!!("draggable"in S.createElement("div")),X=function(a){return!navigator.userAgent.match(/Trident.*rv[ :]?11\./)&&(a=S.createElement("x"),a.style.cssText="pointer-events:auto","auto"===a.style.pointerEvents)}(),Y=!1,Z=Math.abs,$=Math.min,_=([].slice,[]),aa=s(function(a,b,c){if(c&&b.scroll){var d,e,f,g,h,i,j=b.scrollSensitivity,k=b.scrollSpeed,l=a.clientX,m=a.clientY,n=window.innerWidth,o=window.innerHeight;if(C!==c&&(B=b.scroll,C=c,D=b.scrollFn,B===!0)){B=c;do if(B.offsetWidth<B.scrollWidth||B.offsetHeight<B.scrollHeight)break;while(B=B.parentNode)}B&&(d=B,e=B.getBoundingClientRect(),f=(Z(e.right-l)<=j)-(Z(e.left-l)<=j),g=(Z(e.bottom-m)<=j)-(Z(e.top-m)<=j)),f||g||(f=(n-l<=j)-(l<=j),g=(o-m<=j)-(m<=j),(f||g)&&(d=R)),O.vx===f&&O.vy===g&&O.el===d||(O.el=d,O.vx=f,O.vy=g,clearInterval(O.pid),d&&(O.pid=setInterval(function(){return i=g?g*k:0,h=f?f*k:0,"function"==typeof D?D.call(_this,h,i,a):void(d===R?R.scrollTo(R.pageXOffset+h,R.pageYOffset+i):(d.scrollTop+=i,d.scrollLeft+=h))},24)))}},30),ba=function(a){function b(a,b){return void 0!==a&&a!==!0||(a=c.name),"function"==typeof a?a:function(c,d){var e=d.options.group.name;return b?a:a&&(a.join?a.indexOf(e)>-1:e==a)}}var c={},d=a.group;d&&"object"==typeof d||(d={name:d}),c.name=d.name,c.checkPull=b(d.pull,!0),c.checkPut=b(d.put),a.group=c};return a.prototype={constructor:a,_onTapStart:function(a){var b,d=this,e=this.el,f=this.options,g=a.type,h=a.touches&&a.touches[0],i=(h||a).target,j=a.target.shadowRoot&&a.path[0]||i,l=f.filter;if(!v&&!("mousedown"===g&&0!==a.button||f.disabled)&&(!f.handle||c(j,f.handle,e))&&(i=c(i,f.draggable,e))){if(b=q(i,f.draggable),"function"==typeof l){if(l.call(this,a,i,this))return k(d,j,"filter",i,e,b),void a.preventDefault()}else if(l&&(l=l.split(",").some(function(a){if(a=c(j,a.trim(),e))return k(d,a,"filter",i,e,b),!0})))return void a.preventDefault();this._prepareDragStart(a,h,i,b)}},_prepareDragStart:function(a,b,c,d){var e,g=this,i=g.el,l=g.options,n=i.ownerDocument;c&&!v&&c.parentNode===i&&(L=a,z=i,v=c,w=v.parentNode,A=v.nextSibling,J=l.group,H=d,this._lastX=(b||a).clientX,this._lastY=(b||a).clientY,v.style["will-change"]="transform",e=function(){g._disableDelayedDrag(),v.draggable=g.nativeDraggable,h(v,l.chosenClass,!0),g._triggerDragStart(a,b),k(g,z,"choose",v,z,H)},l.ignore.split(",").forEach(function(a){j(v,a.trim(),m)}),f(n,"mouseup",g._onDrop),f(n,"touchend",g._onDrop),f(n,"touchcancel",g._onDrop),f(n,"pointercancel",g._onDrop),l.delay?(f(n,"mouseup",g._disableDelayedDrag),f(n,"touchend",g._disableDelayedDrag),f(n,"touchcancel",g._disableDelayedDrag),f(n,"mousemove",g._disableDelayedDrag),f(n,"touchmove",g._disableDelayedDrag),f(n,"pointermove",g._disableDelayedDrag),g._dragStartTimer=setTimeout(e,l.delay)):e())},_disableDelayedDrag:function(){var a=this.el.ownerDocument;clearTimeout(this._dragStartTimer),g(a,"mouseup",this._disableDelayedDrag),g(a,"touchend",this._disableDelayedDrag),g(a,"touchcancel",this._disableDelayedDrag),g(a,"mousemove",this._disableDelayedDrag),g(a,"touchmove",this._disableDelayedDrag),g(a,"pointermove",this._disableDelayedDrag)},_triggerDragStart:function(a,b){b=b||("touch"==a.pointerType?a:null),b?(L={target:v,clientX:b.clientX,clientY:b.clientY},this._onDragStart(L,"touch")):this.nativeDraggable?(f(v,"dragend",this),f(z,"dragstart",this._onDragStart)):this._onDragStart(L,!0);try{S.selection?setTimeout(function(){S.selection.empty()}):window.getSelection().removeAllRanges()}catch(a){}},_dragStarted:function(){if(z&&v){var b=this.options;h(v,b.ghostClass,!0),h(v,b.dragClass,!1),a.active=this,k(this,z,"start",v,z,H)}},_emulateDragOver:function(){if(M){if(this._lastX===M.clientX&&this._lastY===M.clientY)return;this._lastX=M.clientX,this._lastY=M.clientY,X||i(x,"display","none");var a=S.elementFromPoint(M.clientX,M.clientY),b=a,c=_.length;if(b)do{if(b[Q]){for(;c--;)_[c]({clientX:M.clientX,clientY:M.clientY,target:a,rootEl:b});break}a=b}while(b=b.parentNode);X||i(x,"display","")}},_onTouchMove:function(b){if(L){var c=this.options,d=c.fallbackTolerance,e=c.fallbackOffset,f=b.touches?b.touches[0]:b,g=f.clientX-L.clientX+e.x,h=f.clientY-L.clientY+e.y,j=b.touches?"translate3d("+g+"px,"+h+"px,0)":"translate("+g+"px,"+h+"px)";if(!a.active){if(d&&$(Z(f.clientX-this._lastX),Z(f.clientY-this._lastY))<d)return;this._dragStarted()}this._appendGhost(),N=!0,M=f,i(x,"webkitTransform",j),i(x,"mozTransform",j),i(x,"msTransform",j),i(x,"transform",j),b.preventDefault()}},_appendGhost:function(){if(!x){var a,b=v.getBoundingClientRect(),c=i(v),d=this.options;x=v.cloneNode(!0),h(x,d.ghostClass,!1),h(x,d.fallbackClass,!0),h(x,d.dragClass,!0),i(x,"top",b.top-T(c.marginTop,10)),i(x,"left",b.left-T(c.marginLeft,10)),i(x,"width",b.width),i(x,"height",b.height),i(x,"opacity","0.8"),i(x,"position","fixed"),i(x,"zIndex","100000"),i(x,"pointerEvents","none"),d.fallbackOnBody&&S.body.appendChild(x)||z.appendChild(x),a=x.getBoundingClientRect(),i(x,"width",2*b.width-a.width),i(x,"height",2*b.height-a.height)}},_onDragStart:function(a,b){var c=a.dataTransfer,d=this.options;this._offUpEvents(),"clone"==J.checkPull(this,this,v,a)&&(y=u(v),i(y,"display","none"),z.insertBefore(y,v),k(this,z,"clone",v)),h(v,d.dragClass,!0),b?("touch"===b?(f(S,"touchmove",this._onTouchMove),f(S,"touchend",this._onDrop),f(S,"touchcancel",this._onDrop),f(S,"pointermove",this._onTouchMove),f(S,"pointerup",this._onDrop)):(f(S,"mousemove",this._onTouchMove),f(S,"mouseup",this._onDrop)),this._loopId=setInterval(this._emulateDragOver,50)):(c&&(c.effectAllowed="move",d.setData&&d.setData.call(this,c,v)),f(S,"drop",this),setTimeout(this._dragStarted,0))},_onDragOver:function(d){var e,f,g,h,j=this.el,k=this.options,m=k.group,p=a.active,q=J===m,r=k.sort;if(void 0!==d.preventDefault&&(d.preventDefault(),!k.dragoverBubble&&d.stopPropagation()),N=!0,J&&!k.disabled&&(q?r||(h=!z.contains(v)):K===this||J.checkPull(this,p,v,d)&&m.checkPut(this,p,v,d))&&(void 0===d.rootEl||d.rootEl===this.el)){if(aa(d,k,this.el),Y)return;if(e=c(d.target,k.draggable,j),f=v.getBoundingClientRect(),K=this,h)return b(!0),w=z,void(y||A?z.insertBefore(v,y||A):r||z.appendChild(v));if(0===j.children.length||j.children[0]===x||j===d.target&&(e=o(j,d))){if(e){if(e.animated)return;g=e.getBoundingClientRect()}b(q),l(z,j,v,f,e,g,d)!==!1&&(v.contains(j)||(j.appendChild(v),w=j),this._animate(f,v),e&&this._animate(g,e))}else if(e&&!e.animated&&e!==v&&void 0!==e.parentNode[Q]){E!==e&&(E=e,F=i(e),G=i(e.parentNode)),g=e.getBoundingClientRect();var s,t=g.right-g.left,u=g.bottom-g.top,B=/left|right|inline/.test(F.cssFloat+F.display)||"flex"==G.display&&0===G["flex-direction"].indexOf("row"),C=e.offsetWidth>v.offsetWidth,D=e.offsetHeight>v.offsetHeight,H=(B?(d.clientX-g.left)/t:(d.clientY-g.top)/u)>.5,I=e.nextElementSibling,L=l(z,j,v,f,e,g,d);if(L!==!1){if(Y=!0,setTimeout(n,30),b(q),1===L||L===-1)s=1===L;else if(B){var M=v.offsetTop,O=e.offsetTop;s=M===O?e.previousElementSibling===v&&!C||H&&C:e.previousElementSibling===v||v.previousElementSibling===e?(d.clientY-g.top)/u>.5:O>M}else s=I!==v&&!D||H&&D;v.contains(j)||(s&&!I?j.appendChild(v):e.parentNode.insertBefore(v,s?I:e)),w=v.parentNode,this._animate(f,v),this._animate(g,e)}}}},_animate:function(a,b){var c=this.options.animation;if(c){var d=b.getBoundingClientRect();i(b,"transition","none"),i(b,"transform","translate3d("+(a.left-d.left)+"px,"+(a.top-d.top)+"px,0)"),b.offsetWidth,i(b,"transition","all "+c+"ms"),i(b,"transform","translate3d(0,0,0)"),clearTimeout(b.animated),b.animated=setTimeout(function(){i(b,"transition",""),i(b,"transform",""),b.animated=!1},c)}},_offUpEvents:function(){var a=this.el.ownerDocument;g(S,"touchmove",this._onTouchMove),g(S,"pointermove",this._onTouchMove),g(a,"mouseup",this._onDrop),g(a,"touchend",this._onDrop),g(a,"pointerup",this._onDrop),g(a,"touchcancel",this._onDrop)},_onDrop:function(b){var c=this.el,d=this.options;clearInterval(this._loopId),clearInterval(O.pid),clearTimeout(this._dragStartTimer),g(S,"mousemove",this._onTouchMove),this.nativeDraggable&&(g(S,"drop",this),g(c,"dragstart",this._onDragStart)),this._offUpEvents(),b&&(N&&(b.preventDefault(),!d.dropBubble&&b.stopPropagation()),x&&x.parentNode.removeChild(x),v&&(this.nativeDraggable&&g(v,"dragend",this),m(v),v.style["will-change"]="",h(v,this.options.ghostClass,!1),h(v,this.options.chosenClass,!1),z!==w?(I=q(v,d.draggable),I>=0&&(k(null,w,"add",v,z,H,I),k(this,z,"remove",v,z,H,I),k(null,w,"sort",v,z,H,I),k(this,z,"sort",v,z,H,I))):(y&&y.parentNode.removeChild(y),v.nextSibling!==A&&(I=q(v,d.draggable),I>=0&&(k(this,z,"update",v,z,H,I),k(this,z,"sort",v,z,H,I)))),a.active&&(null!=I&&I!==-1||(I=H),k(this,z,"end",v,z,H,I),this.save()))),this._nulling()},_nulling:function(){z=v=w=x=A=y=B=C=L=M=N=I=E=F=K=J=a.active=null},handleEvent:function(a){var b=a.type;"dragover"===b||"dragenter"===b?v&&(this._onDragOver(a),e(a)):"drop"!==b&&"dragend"!==b||this._onDrop(a)},toArray:function(){for(var a,b=[],d=this.el.children,e=0,f=d.length,g=this.options;e<f;e++)a=d[e],c(a,g.draggable,this.el)&&b.push(a.getAttribute(g.dataIdAttr)||p(a));return b},sort:function(a){var b={},d=this.el;this.toArray().forEach(function(a,e){var f=d.children[e];c(f,this.options.draggable,d)&&(b[a]=f)},this),a.forEach(function(a){b[a]&&(d.removeChild(b[a]),d.appendChild(b[a]))})},save:function(){var a=this.options.store;a&&a.set(this)},closest:function(a,b){return c(a,b||this.options.draggable,this.el)},option:function(a,b){var c=this.options;return void 0===b?c[a]:(c[a]=b,void("group"===a&&ba(c)))},destroy:function(){var a=this.el;a[Q]=null,g(a,"mousedown",this._onTapStart),g(a,"touchstart",this._onTapStart),g(a,"pointerdown",this._onTapStart),this.nativeDraggable&&(g(a,"dragover",this),g(a,"dragenter",this)),Array.prototype.forEach.call(a.querySelectorAll("[draggable]"),function(a){a.removeAttribute("draggable")}),_.splice(_.indexOf(this._onDragOver),1),this._onDrop(),this.el=a=null}},a.utils={on:f,off:g,css:i,find:j,is:function(a,b){return!!c(a,b,a)},extend:t,throttle:s,closest:c,toggleClass:h,clone:u,index:q},a.create=function(b,c){return new a(b,c)},a.version="1.5.0-rc1",a});;define('sortable', ['sortable/Sortable.min'], function (main) { return main; });
+
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -37267,4 +37770,4 @@ define('aurelia-testing/component-tester',['exports', 'aurelia-templating', 'aur
     return ComponentTester;
   }();
 });
-function _aureliaConfigureModuleLoader(){requirejs.config({"baseUrl":"src/","paths":{"aurelia-binding":"../node_modules/aurelia-binding/dist/amd/aurelia-binding","aurelia-bootstrapper":"../node_modules/aurelia-bootstrapper/dist/amd/aurelia-bootstrapper","aurelia-dependency-injection":"../node_modules/aurelia-dependency-injection/dist/amd/aurelia-dependency-injection","aurelia-event-aggregator":"../node_modules/aurelia-event-aggregator/dist/amd/aurelia-event-aggregator","aurelia-framework":"../node_modules/aurelia-framework/dist/amd/aurelia-framework","aurelia-history":"../node_modules/aurelia-history/dist/amd/aurelia-history","aurelia-history-browser":"../node_modules/aurelia-history-browser/dist/amd/aurelia-history-browser","aurelia-loader":"../node_modules/aurelia-loader/dist/amd/aurelia-loader","aurelia-loader-default":"../node_modules/aurelia-loader-default/dist/amd/aurelia-loader-default","aurelia-logging":"../node_modules/aurelia-logging/dist/amd/aurelia-logging","aurelia-logging-console":"../node_modules/aurelia-logging-console/dist/amd/aurelia-logging-console","aurelia-metadata":"../node_modules/aurelia-metadata/dist/amd/aurelia-metadata","aurelia-pal":"../node_modules/aurelia-pal/dist/amd/aurelia-pal","aurelia-pal-browser":"../node_modules/aurelia-pal-browser/dist/amd/aurelia-pal-browser","aurelia-path":"../node_modules/aurelia-path/dist/amd/aurelia-path","aurelia-polyfills":"../node_modules/aurelia-polyfills/dist/amd/aurelia-polyfills","aurelia-route-recognizer":"../node_modules/aurelia-route-recognizer/dist/amd/aurelia-route-recognizer","aurelia-task-queue":"../node_modules/aurelia-task-queue/dist/amd/aurelia-task-queue","aurelia-router":"../node_modules/aurelia-router/dist/amd/aurelia-router","aurelia-templating":"../node_modules/aurelia-templating/dist/amd/aurelia-templating","text":"../node_modules/text/text","aurelia-templating-binding":"../node_modules/aurelia-templating-binding/dist/amd/aurelia-templating-binding","jquery":"../node_modules/jquery/dist/jquery","app-bundle":"../scripts/app-bundle"},"packages":[{"name":"bootstrap","location":"../node_modules/bootstrap/dist","main":"js/bootstrap.min"},{"name":"nprogress","location":"../node_modules/nprogress","main":"nprogress"},{"name":"aurelia-templating-resources","location":"../node_modules/aurelia-templating-resources/dist/amd","main":"aurelia-templating-resources"},{"name":"aurelia-templating-router","location":"../node_modules/aurelia-templating-router/dist/amd","main":"aurelia-templating-router"},{"name":"aurelia-testing","location":"../node_modules/aurelia-testing/dist/amd","main":"aurelia-testing"}],"stubModules":["text"],"shim":{"bootstrap":{"deps":["jquery"],"exports":"$"}},"bundles":{"app-bundle":["web-api","app","environment","main","message","utility","resources/index","pages/contacts/detail","pages/contacts/index","pages/contacts/list","pages/contacts/no-selection","pages/flow-builder/builder","pages/flow-builder/index","pages/flow-builder/toolbox","pages/projects/index","pages/form-builder/builder","pages/form-builder/index","modules/fields/base/base","modules/fields/textbox/textbox","modules/fields/header/header","pages/form-builder/toolbox","resources/attributes/bs-popover","resources/elements/loading-indicator","resources/value-converters/date-format","resources/value-converters/number-format","resources/view-models/list-view-model","modules/fields/checkbox/checkbox","modules/triggers/base/base","modules/triggers/timer/timer","resources/elements/modal/modal","resources/elements/nav-bar/nav-bar","styles"]}})}
+function _aureliaConfigureModuleLoader(){requirejs.config({"baseUrl":"src/","paths":{"aurelia-binding":"../node_modules/aurelia-binding/dist/amd/aurelia-binding","aurelia-bootstrapper":"../node_modules/aurelia-bootstrapper/dist/amd/aurelia-bootstrapper","aurelia-dependency-injection":"../node_modules/aurelia-dependency-injection/dist/amd/aurelia-dependency-injection","aurelia-event-aggregator":"../node_modules/aurelia-event-aggregator/dist/amd/aurelia-event-aggregator","aurelia-history":"../node_modules/aurelia-history/dist/amd/aurelia-history","aurelia-framework":"../node_modules/aurelia-framework/dist/amd/aurelia-framework","aurelia-history-browser":"../node_modules/aurelia-history-browser/dist/amd/aurelia-history-browser","aurelia-loader":"../node_modules/aurelia-loader/dist/amd/aurelia-loader","aurelia-loader-default":"../node_modules/aurelia-loader-default/dist/amd/aurelia-loader-default","aurelia-logging":"../node_modules/aurelia-logging/dist/amd/aurelia-logging","aurelia-logging-console":"../node_modules/aurelia-logging-console/dist/amd/aurelia-logging-console","aurelia-pal":"../node_modules/aurelia-pal/dist/amd/aurelia-pal","aurelia-metadata":"../node_modules/aurelia-metadata/dist/amd/aurelia-metadata","aurelia-pal-browser":"../node_modules/aurelia-pal-browser/dist/amd/aurelia-pal-browser","aurelia-path":"../node_modules/aurelia-path/dist/amd/aurelia-path","aurelia-polyfills":"../node_modules/aurelia-polyfills/dist/amd/aurelia-polyfills","aurelia-route-recognizer":"../node_modules/aurelia-route-recognizer/dist/amd/aurelia-route-recognizer","aurelia-router":"../node_modules/aurelia-router/dist/amd/aurelia-router","aurelia-task-queue":"../node_modules/aurelia-task-queue/dist/amd/aurelia-task-queue","aurelia-templating":"../node_modules/aurelia-templating/dist/amd/aurelia-templating","aurelia-templating-binding":"../node_modules/aurelia-templating-binding/dist/amd/aurelia-templating-binding","aurelia-animator-css":"../node_modules/aurelia-animator-css/dist/amd/aurelia-animator-css","text":"../node_modules/text/text","jquery":"../node_modules/jquery/dist/jquery","app-bundle":"../scripts/app-bundle"},"packages":[{"name":"sortable","location":"../node_modules/sortablejs","main":"Sortable.min"},{"name":"bootstrap","location":"../node_modules/bootstrap/dist","main":"js/bootstrap.min"},{"name":"nprogress","location":"../node_modules/nprogress","main":"nprogress"},{"name":"aurelia-templating-resources","location":"../node_modules/aurelia-templating-resources/dist/amd","main":"aurelia-templating-resources"},{"name":"aurelia-templating-router","location":"../node_modules/aurelia-templating-router/dist/amd","main":"aurelia-templating-router"},{"name":"aurelia-testing","location":"../node_modules/aurelia-testing/dist/amd","main":"aurelia-testing"}],"stubModules":["text"],"shim":{"bootstrap":{"deps":["jquery"],"exports":"$"}},"bundles":{"app-bundle":["web-api","app","environment","main","message","utility","resources/index","pages/contacts/detail","pages/contacts/index","pages/contacts/list","pages/contacts/no-selection","pages/flow-builder/builder","pages/flow-builder/index","pages/flow-builder/toolbox","pages/form-builder/builder","pages/form-builder/index","modules/fields/base/base","modules/fields/textbox/textbox","modules/fields/header/header","pages/form-builder/toolbox","pages/projects/index","resources/attributes/bs-popover","resources/elements/loading-indicator","resources/value-converters/date-format","resources/value-converters/number-format","resources/view-models/list-view-model","modules/fields/checkbox/checkbox","modules/triggers/base/base","modules/triggers/timer/timer","resources/elements/modal/modal-footer","resources/elements/modal/modal-header","resources/elements/modal/modal","resources/elements/modal/model-body","resources/elements/nav-bar/nav-bar","styles","resources/elements/modal/modal-body"]}})}
