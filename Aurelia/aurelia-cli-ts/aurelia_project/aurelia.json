@@ -130,7 +130,7 @@
           {
             "name": "sortablejs",
             "path": "../node_modules/sortablejs/",
-            "main": "Sortable"
+            "main": "Sortable.js"
           },
           {
             "name": "aurelia-sortablejs",

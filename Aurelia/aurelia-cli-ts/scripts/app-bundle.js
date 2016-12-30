@@ -212,36 +212,6 @@ define('resources/index',["require", "exports"], function (require, exports) {
     exports.configure = configure;
 });
 
-define('pages/flow-builder/builder',["require", "exports"], function (require, exports) {
-    "use strict";
-    var FlowBuilder = (function () {
-        function FlowBuilder() {
-        }
-        return FlowBuilder;
-    }());
-    exports.FlowBuilder = FlowBuilder;
-});
-
-define('pages/flow-builder/index',["require", "exports"], function (require, exports) {
-    "use strict";
-    var FlowBuild = (function () {
-        function FlowBuild() {
-        }
-        return FlowBuild;
-    }());
-    exports.FlowBuild = FlowBuild;
-});
-
-define('pages/flow-builder/toolbox',["require", "exports"], function (require, exports) {
-    "use strict";
-    var FlowToolbox = (function () {
-        function FlowToolbox() {
-        }
-        return FlowToolbox;
-    }());
-    exports.FlowToolbox = FlowToolbox;
-});
-
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -386,6 +356,36 @@ define('pages/contacts/no-selection',["require", "exports"], function (require, 
     exports.NoSelection = NoSelection;
 });
 
+define('pages/flow-builder/builder',["require", "exports"], function (require, exports) {
+    "use strict";
+    var FlowBuilder = (function () {
+        function FlowBuilder() {
+        }
+        return FlowBuilder;
+    }());
+    exports.FlowBuilder = FlowBuilder;
+});
+
+define('pages/flow-builder/index',["require", "exports"], function (require, exports) {
+    "use strict";
+    var FlowBuild = (function () {
+        function FlowBuild() {
+        }
+        return FlowBuild;
+    }());
+    exports.FlowBuild = FlowBuild;
+});
+
+define('pages/flow-builder/toolbox',["require", "exports"], function (require, exports) {
+    "use strict";
+    var FlowToolbox = (function () {
+        function FlowToolbox() {
+        }
+        return FlowToolbox;
+    }());
+    exports.FlowToolbox = FlowToolbox;
+});
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -401,29 +401,26 @@ define('pages/form-builder/builder',["require", "exports", "aurelia-framework", 
         function FormBuilder(ea) {
             var _this = this;
             this.widgets = [];
-            this.widget = 'textbox';
             this.sortOptions = {
                 group: {
                     name: 'builder',
                     put: ['palette']
+                },
+                onAdd: function (e) {
+                    _this.addWidget(e);
                 }
             };
             ea.subscribe('clearReport', function () {
                 _this.widgets = [];
             });
         }
-        FormBuilder.prototype.onSortAdd = function (evt) {
-            console.info('###', evt);
-            evt.returnValue = false;
-            return false;
-        };
-        FormBuilder.prototype.addWidget = function () {
-            this.widgets.push({
+        FormBuilder.prototype.addWidget = function (evt) {
+            var t = evt.item.getAttribute('data-id');
+            this.widgets.splice(evt.newIndex, 0, {
                 id: new Date(),
-                type: this.widget,
+                type: t,
                 model: {
                     name: "aaa",
-                    type: 'textbox',
                     value: 'test'
                 }
             });
@@ -456,10 +453,6 @@ define('pages/form-builder/index',["require", "exports"], function (require, exp
     }());
     exports.FormDesigner = FormDesigner;
 });
-
-
-
-define("pages/form-builder/tool", [],function(){});
 
 define('modules/fields/base/base',["require", "exports"], function (require, exports) {
     "use strict";
@@ -538,6 +531,9 @@ define('pages/form-builder/toolbox',["require", "exports", "aurelia-framework", 
                 sort: false,
                 setData: function (dataTransfer, dragEl) {
                     dataTransfer.setData('draggedCtrl', dragEl.getAttribute('data-id'));
+                },
+                onEnd: function (evt) {
+                    evt.item.parentNode.removeChild(evt.item);
                 }
             };
             this.widgets = [
@@ -693,14 +689,6 @@ define('resources/elements/loading-indicator',["require", "exports", "nprogress"
     exports.LoadingIndicator = LoadingIndicator;
 });
 
-
-
-define("resources/value-converters/date-format", [],function(){});
-
-
-
-define("resources/value-converters/number-format", [],function(){});
-
 define('resources/view-models/list-view-model',["require", "exports"], function (require, exports) {
     "use strict";
     var ListViewModel = (function () {
@@ -738,6 +726,14 @@ define('resources/view-models/list-view-model',["require", "exports"], function 
     }());
     exports.ListViewModel = ListViewModel;
 });
+
+
+
+define("resources/value-converters/date-format", [],function(){});
+
+
+
+define("resources/value-converters/number-format", [],function(){});
 
 
 
@@ -998,25 +994,24 @@ define('resources/elements/modal/modal',["require", "exports", "aurelia-framewor
     exports.Modal = Modal;
 });
 
-define('text!styles.css', ['module'], function(module) { module.exports = "html, body {\n  height: 100%;\n}\n\nbody { padding-top: 70px; }\n\nsection {\n  margin: 0 20px;\n}\n\na:focus {\n  outline: none;\n}\n\n.navbar-nav li.loader {\n    margin: 12px 24px 0 6px;\n}\n\n.no-selection {\n  margin: 20px;\n}\n\n.contact-list {\n  overflow-y: auto;\n  border: 1px solid #ddd;\n  padding: 10px;\n}\n\n.panel {\n  margin: 20px;\n}\n\n.button-bar {\n  right: 0;\n  left: 0;\n  bottom: 0;\n  border-top: 1px solid #ddd;\n  background: white;\n}\n\n.button-bar > button {\n  float: right;\n  margin: 20px;\n}\n\nli.list-group-item {\n  list-style: none;\n}\n\nli.list-group-item > a {\n  text-decoration: none;\n}\n\nli.list-group-item.active > a {\n  color: white;\n}\n"; });
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n  <require from=\"./styles.css\"></require>\n\n  <loading-indicator loading.bind=\"router.isNavigating || api.isRequesting\"></loading-indicator>\n\n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <router-view></router-view>\n</template>\n"; });
-define('text!pages/flow-builder/builder.html', ['module'], function(module) { module.exports = "<template>\nReports\n</template>\n"; });
-define('text!pages/flow-builder/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">\n      <h1 class=\"non-printable\">Report Builder</h1>\n\n      <div class=\"row\">\n          <compose class=\"col-md-2 non-printable\" view-model=\"./toolbox\"></compose>\n          <compose class=\"col-md-10 printable\" view-model=\"./builder\"></compose>\n      </div>\n  </div>\n</template>\n"; });
-define('text!pages/flow-builder/toolbox.html', ['module'], function(module) { module.exports = "<template>\n  <h3>Toolbox</h3>\n  <ul class=\"list-unstyled toolbox au-stagger\" ref=\"toolboxList\">\n    <li repeat.for=\"widget of widgets\" class=\"au-animate\" title=\"${widget.type}\"><i class=\"fa ${widget.icon}\"/> ${widget.name}</li>\n  </ul>\n  <button click.delegate=\"printReport()\" type=\"button\" class=\"btn btn-primary fa fa-print\"> Print</button>\n  <button click.delegate=\"clearReport()\" type=\"button\" class=\"btn btn-warning fa fa-remove\"> Clear Report</button>\n</template>\n"; });
-define('text!pages/form-builder/builder.html', ['module'], function(module) { module.exports = "<template>\n  <input type=\"text\" name=\"\" value.bind=\"widget\">\n  <input type=\"button\" value=\"add\" click.trigger=\"addWidget()\">\n  <br>\n  <div style=\"border: 1px dotted #ddd; min-height: 300px;\"\n    sortable.bind=\"sortOptions\"\n    sortable-add.delegate=\"onSortAdd($event)\">\n    <div repeat.for=\"widget of widgets\" class=\"au-animate item\">\n      <compose\n        model.bind=\"widget.model\"\n        view-model=\"../../modules/fields/${widget.type}/${widget.type}\" class=\"col-md-11\"></compose>\n      <i class=\"remove-widget fa fa-trash-o col-md-1 non-printable\" click.trigger=\"$parent.removeWidget(widget)\"></i>\n    </div>\n  </div>\n  \n</template>\n"; });
-define('text!pages/form-builder/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">\n      <div class=\"row\">\n          <compose class=\"col-md-2 non-printable\" view-model=\"./toolbox\"></compose>\n          <compose class=\"col-md-10 printable\" view-model=\"./builder\"></compose>\n      </div>\n  </div>\n</template>\n"; });
-define('text!pages/form-builder/tool.html', ['module'], function(module) { module.exports = ""; });
-define('text!pages/form-builder/toolbox.html', ['module'], function(module) { module.exports = "<template>\n  <!--<button click.delegate=\"printReport()\" type=\"button\" class=\"btn btn-primary fa fa-print\"> Print</button>\n  <button click.delegate=\"clearReport()\" type=\"button\" class=\"btn btn-warning fa fa-remove\"> Clear Report</button>-->\n  <div class=\"panel panel-default\">\n    <div class=\"panel-heading\">\n      <h3 class=\"panel-title\">Tool Box</h3>\n    </div>\n    <div class=\"panel-body\">\n      <div sortable.bind=\"sortOptions\">\n        <div repeat.for=\"t of widgets\" \n          data-id=\"${t.type}\"\n          title=\"${t.type}\" style=\"border:1px solid #ddd\">${t.name}</div>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
+define('text!styles.css', ['module'], function(module) { module.exports = "html, body {\n  height: 100%;\n}\n\nbody { padding-top: 70px; }\n\nsection {\n  margin: 0 20px;\n}\n\na:focus {\n  outline: none;\n}\n\n.navbar-nav li.loader {\n    margin: 12px 24px 0 6px;\n}\n\n.no-selection {\n  margin: 20px;\n}\n\n.contact-list {\n  overflow-y: auto;\n  border: 1px solid #ddd;\n  padding: 10px;\n}\n\n.panel {\n  margin: 20px;\n}\n\n.button-bar {\n  right: 0;\n  left: 0;\n  bottom: 0;\n  border-top: 1px solid #ddd;\n  background: white;\n}\n\n.button-bar > button {\n  float: right;\n  margin: 20px;\n}\n\nli.list-group-item {\n  list-style: none;\n}\n\nli.list-group-item > a {\n  text-decoration: none;\n}\n\nli.list-group-item.active > a {\n  color: white;\n}\n"; });
 define('text!pages/contacts/detail.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"panel panel-primary\">\n    <div class=\"panel-heading\">\n      <h3 class=\"panel-title\"   \n        bs-popover=\"placement:'right'; title.bind: contact.firstName; content.bind: contact.lastName\">Profile</h3>\n      \n    </div>\n    <div class=\"panel-body\">\n      <form role=\"form\" class=\"form-horizontal\">\n        <div textcontent.bind=\"'is: ' + contact.firstName\"></div>\n        \n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">First Name</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"first name\" class=\"form-control\" value.bind=\"contact.firstName\">\n          </div>\n        </div>\n\n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">Last Name</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"last name\" class=\"form-control\" value.bind=\"contact.lastName\">\n          </div>\n        </div>\n\n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">Email</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"email\" class=\"form-control\" value.bind=\"contact.email\">\n          </div>\n        </div>\n\n        <div class=\"form-group\">\n          <label class=\"col-sm-2 control-label\">Phone Number</label>\n          <div class=\"col-sm-10\">\n            <input type=\"text\" placeholder=\"phone number\" class=\"form-control\" value.bind=\"contact.phoneNumber\">\n          </div>\n        </div>\n      </form>\n    </div>\n  </div>\n\n  <div class=\"button-bar\">\n    <span>${message}</span>\n    <button class=\"btn btn-success\" click.delegate=\"save()\" disabled.bind=\"!canSave\">Save</button>\n  </div>\n</template>\n"; });
 define('text!pages/contacts/index.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./list\"></require>\n\n  <div class=\"container\">\n    <div class=\"row\">\n      <contact-list class=\"col-md-4\"></contact-list>\n      <router-view class=\"col-md-8\"></router-view>\n    </div>\n</template>\n"; });
 define('text!pages/contacts/list.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"contact-list\">\n    <ul class=\"list-group\">\n      <li repeat.for=\"contact of contacts\" class=\"list-group-item ${contact.id === $parent.selectedId ? 'active' : ''}\">\n        <a route-href=\"route: contact; params.bind: {id:contact.id}\" click.delegate=\"$parent.select(contact)\">\n          <h4 class=\"list-group-item-heading\">${contact.firstName} ${contact.lastName}</h4>\n          <p class=\"list-group-item-text\">${contact.email}</p>\n        </a>\n      </li>\n    </ul>\n  </div>\n</template>\n"; });
 define('text!pages/contacts/no-selection.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"no-selection text-center\">\n    <h2>${message}</h2>\n    ${showing}\n    <select value.bind=\"showing\">\n      <option value=\"\">Select</option>\n      <option repeat.for=\"opt of options\" \n        model.bind=\"opt.id\">${opt.text}</option>\n    </select>\n  </div>\n\n  <modal showing.bind=\"showing\">\n    <modal-header slot=\"modal-header\" title=\"Name Goes Here\" close.call=\"closeDialog()\"></modal-header>\n    <modal-body slot=\"modal-body\" content-view=\"${content}\"></modal-body>\n    <modal-footer  slot=\"modal-footer\" buttons.bind=\"['Cancel']\"></modal-footer>\n  </modal>\n</template>\n"; });
-define('text!pages/projects/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">Projects</div>\n</template>\n"; });
+define('text!pages/flow-builder/builder.html', ['module'], function(module) { module.exports = "<template>\nReports\n</template>\n"; });
+define('text!pages/flow-builder/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">\n      <h1 class=\"non-printable\">Report Builder</h1>\n\n      <div class=\"row\">\n          <compose class=\"col-md-2 non-printable\" view-model=\"./toolbox\"></compose>\n          <compose class=\"col-md-10 printable\" view-model=\"./builder\"></compose>\n      </div>\n  </div>\n</template>\n"; });
+define('text!pages/flow-builder/toolbox.html', ['module'], function(module) { module.exports = "<template>\n  <h3>Toolbox</h3>\n  <ul class=\"list-unstyled toolbox au-stagger\" ref=\"toolboxList\">\n    <li repeat.for=\"widget of widgets\" class=\"au-animate\" title=\"${widget.type}\"><i class=\"fa ${widget.icon}\"/> ${widget.name}</li>\n  </ul>\n  <button click.delegate=\"printReport()\" type=\"button\" class=\"btn btn-primary fa fa-print\"> Print</button>\n  <button click.delegate=\"clearReport()\" type=\"button\" class=\"btn btn-warning fa fa-remove\"> Clear Report</button>\n</template>\n"; });
+define('text!pages/form-builder/builder.html', ['module'], function(module) { module.exports = "<template>\n  <style>\n    .item {\n      clear: both\n    }\n  </style>\n  <div style=\"border: 1px dotted #ddd; min-height: 300px;\"\n    sortable.bind=\"sortOptions\">\n    <div class=\"item\" repeat.for=\"widget of widgets\">\n      <compose\n        model.bind=\"widget.model\"\n        view-model=\"../../modules/fields/${widget.type}/${widget.type}\"></compose>\n      <i class=\"remove-widget fa fa-trash-o col-md-1 non-printable\" click.trigger=\"$parent.removeWidget(widget)\"></i>\n    </div>\n  </div>\n  \n</template>\n"; });
+define('text!pages/form-builder/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">\n      <div class=\"row\">\n          <compose class=\"col-md-2 non-printable\" view-model=\"./toolbox\"></compose>\n          <compose class=\"col-md-10 printable\" view-model=\"./builder\"></compose>\n      </div>\n  </div>\n</template>\n"; });
+define('text!pages/form-builder/toolbox.html', ['module'], function(module) { module.exports = "<template>\n  <!--<button click.delegate=\"printReport()\" type=\"button\" class=\"btn btn-primary fa fa-print\"> Print</button>\n  <button click.delegate=\"clearReport()\" type=\"button\" class=\"btn btn-warning fa fa-remove\"> Clear Report</button>-->\n  <div class=\"panel panel-default\">\n    <div class=\"panel-heading\">\n      <h3 class=\"panel-title\">Tool Box</h3>\n    </div>\n    <div class=\"panel-body\">\n      <div sortable.bind=\"sortOptions\">\n        <div repeat.for=\"t of widgets\" \n          data-id=\"${t.type}\"\n          title=\"${t.type}\" style=\"border:1px solid #ddd\">${t.name}</div>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
 define('text!pages/harness/hello.html', ['module'], function(module) { module.exports = "<template>\nHello\n</template>\n"; });
 define('text!pages/harness/index.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"./components/layout-side-main\"></require>\n  <require from=\"./components/navigator\"></require>\n  <require from=\"./components/toper\"></require>\n  <layout-side-main>\n    <div slot=\"side\">\n      <navigator \n        select.call=\"selectMenu(menu)\"\n        menus.bind=\"menus\"></navigator>\n    </div>\n\n    <div slot=\"main\">\n      <toper router.bind=\"router\" if.bind=\"router.container.parent\"></toper>\n      <!--<compose view-model=\"./components/${currentMenu.id}-demo\"></compose>-->\n      <router-view></router-view>\n    </div>\n  </layout-side-main>\n</template>\n"; });
+define('text!pages/projects/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">Projects</div>\n</template>\n"; });
 define('text!modules/fields/checkbox/checkbox.html', ['module'], function(module) { module.exports = ""; });
-define('text!modules/fields/header/header.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"col-md-12\">\n    <h2>Abstract-IT &trade;</h2>\n    <p>Delivering concrete solutions</p>\n\n    <div class=\"pull-right\">\n      Funnyroad 123<br />\n      1010 SOME-STATE<br />\n      USA<br />\n    </div>\n  </div>\n</template>\n"; });
-define('text!modules/fields/textbox/textbox.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"col-md-12\">\n    ** ${name}\n  </div>\n</template>\n"; });
+define('text!modules/fields/header/header.html', ['module'], function(module) { module.exports = "<template>\n  <div>\n    <div class=\"pull-right\">\n      Funnyroad 123<br />\n      1010 SOME-STATE<br />\n      USA<br />\n    </div>\n\n    <h2>Abstract-IT &trade;</h2>\n    <p>Delivering concrete solutions</p> \n  </div>\n</template>\n"; });
+define('text!modules/fields/textbox/textbox.html', ['module'], function(module) { module.exports = "<template>\n  <div>\n    <div>\n      ** ${name}\n    </div>\n  </div>\n</template>\n"; });
 define('text!pages/harness/components/layout-side-main-demo.html', ['module'], function(module) { module.exports = "<template>\nYour Template Here\n</template>\n"; });
 define('text!pages/harness/components/layout-side-main.html', ['module'], function(module) { module.exports = "<template>\n  <style>\n    .o-layout {\n      display: flex;\n      height: 100%\n    }\n    .o-layout > .main {\n      flex-grow: 1;\n      border-left: 1px solid #ddd;\n    }\n  </style>\n  <div class=\"o-layout\">\n    <div class=\"side\">\n      <slot name=\"side\"></slot>\n    </div>\n\n    <div class=\"main\">\n      <slot name=\"main\"></div>\n    </div>\n  </div>\n</template>\n"; });
 define('text!pages/harness/components/navigator.html', ['module'], function(module) { module.exports = "<template>\n  <div>\n    <h1>Logo</h1>\n    <nav>\n      <ul>\n        <li repeat.for=\"menu of menus\"><a click.trigger=\"select({menu: menu})\">${menu.title}</a></li>\n      </ul>\n    </nav>\n  </div>\n</template>\n"; });

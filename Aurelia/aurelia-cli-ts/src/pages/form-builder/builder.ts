@@ -1,15 +1,18 @@
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
+import $ from 'jquery';
 
 @inject(EventAggregator)
 export class FormBuilder {
   widgets = [];
-  widget = 'textbox';
 
   sortOptions = {
     group: {
       name: 'builder',
       put: ['palette']
+    },
+    onAdd: (e) => {
+      this.addWidget(e)
     }
   }
 
@@ -19,19 +22,13 @@ export class FormBuilder {
     });
   }
 
-  public onSortAdd(evt: CustomEvent) {
-    console.info('###', evt);
-    evt.returnValue = false;
-    return false;
-  }
-
-  addWidget() {
-    this.widgets.push({
+  addWidget(evt) {
+    let t = evt.item.getAttribute('data-id');
+    this.widgets.splice(evt.newIndex, 0 {
       id: new Date(),
-      type: this.widget,
+      type: t,
       model: {
         name: "aaa",
-        type: 'textbox',
         value: 'test'
       }
     });
