@@ -12,6 +12,7 @@
     "aurelia-bootstrapper": "^1.0.0",
     "aurelia-http-client": "^1.0.3",
     "aurelia-i18n": "^1.2.3",
+    "aurelia-sortablejs": "^1.0.0",
     "bluebird": "^3.4.1",
     "bootstrap": "^3.3.7",
     "jquery": "^2.2.4",

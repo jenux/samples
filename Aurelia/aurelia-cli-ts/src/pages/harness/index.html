@@ -1,0 +1,18 @@
+<template>
+  <require from="./components/layout-side-main"></require>
+  <require from="./components/navigator"></require>
+  <require from="./components/toper"></require>
+  <layout-side-main>
+    <div slot="side">
+      <navigator 
+        select.call="selectMenu(menu)"
+        menus.bind="menus"></navigator>
+    </div>
+
+    <div slot="main">
+      <toper router.bind="router" if.bind="router.container.parent"></toper>
+      <!--<compose view-model="./components/${currentMenu.id}-demo"></compose>-->
+      <router-view></router-view>
+    </div>
+  </layout-side-main>
+</template>

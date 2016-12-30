@@ -1,0 +1,10 @@
+<template>
+  <div>
+    <h1>Logo</h1>
+    <nav>
+      <ul>
+        <li repeat.for="menu of menus"><a click.trigger="select({menu: menu})">${menu.title}</a></li>
+      </ul>
+    </nav>
+  </div>
+</template>

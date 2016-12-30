@@ -15,7 +15,8 @@ export class App {
       { route: 'contacts',    moduleId: './pages/contacts/index',     nav: true, title: 'Contacts'},
       { route: 'projects',    moduleId: './pages/projects/index',     nav: true, title: 'Projects'},
       { route: 'flow-builder',moduleId: './pages/flow-builder/index', nav: true, title: 'Flow Builder'},
-      { route: 'form-builder',moduleId: './pages/form-builder/index', nav: true, title: 'Form Builder'}
+      { route: 'form-builder',moduleId: './pages/form-builder/index', nav: true, title: 'Form Builder'},
+      { route: 'harness',     moduleId: './pages/harness/index',      nav: true, title: 'Harness'}
     ]);
 
     this.router = router;

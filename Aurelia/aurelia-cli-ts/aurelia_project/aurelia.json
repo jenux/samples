@@ -116,11 +116,6 @@
           "aurelia-templating-binding",
           "aurelia-animator-css",
           "text",
-          {
-            "name": "sortable",
-            "path": "../node_modules/sortablejs",
-            "main": "Sortable.min"
-          },
           "jquery",
           {
             "name": "bootstrap",
@@ -131,6 +126,16 @@
             "resources": [
               "css/bootstrap.css"
             ]
+          },
+          {
+            "name": "sortablejs",
+            "path": "../node_modules/sortablejs/",
+            "main": "Sortable"
+          },
+          {
+            "name": "aurelia-sortablejs",
+            "path": "../node_modules/aurelia-sortablejs/dist/amd",
+            "main": "index"
           },
           {
             "name": "nprogress",

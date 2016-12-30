@@ -4,30 +4,24 @@ import {EventAggregator} from 'aurelia-event-aggregator';
 import {Textbox} from '../../modules/fields/textbox/textbox';
 import {Header} from '../../modules/fields/header/header';
 
-//import "sortable";
-
-
 @inject(EventAggregator, Textbox, Header)
 export class FormToolbox {
-
   widgets;
+  sortOptions: any = {
+    group: {
+      name: 'palette',
+      pull: 'clone'
+    },
+    sort: false,
+    setData: function(dataTransfer, dragEl) {
+      dataTransfer.setData('draggedCtrl', dragEl.getAttribute('data-id'));
+    }
+  };
 
   constructor(ea: EventAggregator, textbox:Textbox, header: Header) {
     this.widgets = [
-      textbox,
-      header
+      header,
+      textbox
     ];
-  }
-
-  attached() {
-    // toolboxList is `ref` in template
-    /*new sortable(this.toolboxList, {
-      sort: false,
-      group: {
-        name: "palette",
-        pull: 'clone',
-        put: false
-      }
-    });*/
   }
 }
