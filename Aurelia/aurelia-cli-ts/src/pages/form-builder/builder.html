@@ -4,14 +4,13 @@
       clear: both
     }
   </style>
-  <div style="border: 1px dotted #ddd; min-height: 300px;"
-    sortable.bind="sortOptions">
-    <div class="item" repeat.for="widget of widgets">
+  <div sortable.bind="sortOptions">
+    <div class="item" repeat.for="f of form.pages[0].fields">
       <compose
-        model.bind="widget.model"
-        view-model="../../modules/fields/${widget.type}/${widget.type}"></compose>
-      <i class="remove-widget fa fa-trash-o col-md-1 non-printable" click.trigger="$parent.removeWidget(widget)"></i>
+        model.bind="f.model"
+        mode.bind="f.mode"
+        view-model="../../modules/fields/${f.type}/${f.type}"></compose>
+      <i class="remove-widget fa fa-trash-o col-md-1 non-printable" click.trigger="$parent.removeWidget(f)"></i>
     </div>
   </div>
-  
 </template>

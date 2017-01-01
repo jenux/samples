@@ -1,0 +1,15 @@
+<template>
+  <style>
+    .breadcrumbs {
+      display: flex;
+    }
+    .breadcrumbs div:first-child {
+      flex-grow: 1;
+    }
+  </style>
+  
+  <div class="breadcrumbs">
+    <div>Home > ${router.currentInstruction.config.route}</div>
+    <slot></slot>
+  </div>
+</template>

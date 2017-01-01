@@ -1,9 +1,9 @@
 import {bindable} from 'aurelia-framework';
 
-export class Toper {
+export class Breadcrumbs {
   @bindable router;  
 
   bind() {
-    console.info('####', this.router)
+    //console.info('####', this.router)
   }
 }

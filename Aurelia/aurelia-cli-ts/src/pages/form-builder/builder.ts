@@ -4,7 +4,15 @@ import $ from 'jquery';
 
 @inject(EventAggregator)
 export class FormBuilder {
-  widgets = [];
+  form = {
+    title: 'New Form',
+    pages: [
+      {
+        title: 'page 1',
+        fields: []
+      }
+    ]
+  }
 
   sortOptions = {
     group: {
@@ -17,31 +25,35 @@ export class FormBuilder {
   }
 
   constructor(ea: EventAggregator) {
-    ea.subscribe('clearReport', () => {
+    /*ea.subscribe('clearReport', () => {
       this.widgets = [];
-    });
+    });*/
+  }
+
+  nextLabel(t) {
+    return 'label for ' + t;
   }
 
   addWidget(evt) {
     let t = evt.item.getAttribute('data-id');
-    this.widgets.splice(evt.newIndex, 0 {
-      id: new Date(),
+    this.form.pages[0].fields.splice(evt.newIndex, 0, {
       type: t,
       model: {
-        name: "aaa",
-        value: 'test'
+        label: this.nextLabel(t),
+        value: '',
+        mode: 'design'
       }
     });
   }
 
   removeWidget(widget) {
-    let idx = this.widgets.map( (obj, index) => {
+    /*let idx = this.widgets.map( (obj, index) => {
       if( obj.id === widget.id )
         return index;
     }).reduce( (prev, current) => {
       return current || prev;
     });
 
-    this.widgets.splice(idx, 1);
+    this.widgets.splice(idx, 1);*/
   }
 }

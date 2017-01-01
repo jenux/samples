@@ -1,8 +1,33 @@
 <template>
-  <div class="container">
-      <div class="row">
-          <compose class="col-md-2 non-printable" view-model="./toolbox"></compose>
-          <compose class="col-md-10 printable" view-model="./builder"></compose>
-      </div>
-  </div>
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+          padding-top: 50px;
+        }
+        .builder {
+            display: flex;
+            height: 100%;
+            border-top: 1px solid #252525;
+        }
+        .sidebar {
+            width: 200px;
+            background: #4b4b4b;
+            border-right: 1px solid #252525;
+        }
+        .canvas {
+            flex-grow: 1;
+        }
+        .configurator {
+            width: 200px;
+            background: #4b4b4b;
+            border-left: 1px solid #252525;
+        }
+    </style>
+    <div class="builder">
+        <compose class="sidebar" view-model="./toolbox"></compose>
+        <compose class="canvas" view-model="./builder"></compose>
+        <compose class="configurator" view-model="./conf"></compose>
+    </div>
 </template>
