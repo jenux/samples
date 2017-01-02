@@ -6,7 +6,6 @@ export class Header extends FieldBase {
   datatype: string = 'html';
 
   activate(model) {
-    console.info('***** arche type', this.archetype)
-    //this.sayHello();
+    this.model = model; 
   }
 }

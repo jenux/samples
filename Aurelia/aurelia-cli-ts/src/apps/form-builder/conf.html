@@ -6,4 +6,7 @@
             <li><a href="#">App</a></li>
         </ul>
     </div>
+    <compose if.bind="target"
+      model="target" 
+      view-model="../../modules/fields/${target.type}/design"></compose>
 </template>

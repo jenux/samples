@@ -11,6 +11,4 @@ export class NoSelection {
   closeDialog() {
     this.showing = false;
   }
-
-  content="../../../pages/contacts/list";
 }

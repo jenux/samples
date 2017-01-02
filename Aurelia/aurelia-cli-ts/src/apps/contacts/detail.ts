@@ -1,9 +1,9 @@
 import {inject} from 'aurelia-framework';
 import {EventAggregator} from 'aurelia-event-aggregator';
-import {WebAPI} from '../../web-api';
+import {WebAPI} from './web-api';
 
-import {areEqual} from '../../utility';
-import {ContactUpdated, ContactViewed} from '../../message';
+import {areEqual} from './utility';
+import {ContactUpdated, ContactViewed} from './message';
 
 //import {computedFrom} from 'aurelia-framework';
 

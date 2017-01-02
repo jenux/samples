@@ -13,11 +13,10 @@ export class FormToolbox {
       pull: 'clone'
     },
     sort: false,
-    setData: function(dataTransfer, dragEl) {
-      dataTransfer.setData('draggedCtrl', dragEl.getAttribute('data-id'));
-    },
     onEnd: function(evt) {
-      evt.item.parentNode.removeChild(evt.item);
+      if (evt.from !== evt.item.parentNode) {
+        evt.item.parentNode.removeChild(evt.item);
+      }
     }
   };
 

@@ -5,12 +5,7 @@ export class Textbox extends FieldBase {
   type:  string = 'textbox';
   datatype: string = 'string';
 
-  activate(model, mode) {
+  activate(model) {
     this.model = model;
-
-    console.info('***', mode)
-    //this.sayHello();
   }
-
-  
 }

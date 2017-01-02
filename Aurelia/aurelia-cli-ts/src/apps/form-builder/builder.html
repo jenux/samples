@@ -1,0 +1,21 @@
+<template>
+  <style>
+    .item {
+      clear: both;
+      padding: 15px;
+    }
+    .item:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  </style>
+  <div sortable.bind="sortOptions" style="height:100%">
+    <div class="item" 
+      repeat.for="f of form.pages[0].fields"
+      click.trigger="editField(f)">
+      <compose
+        model.bind="f"
+        view-model="../../modules/fields/${f.type}/${f.type}"></compose>
+      <!--<i class="remove-widget fa fa-trash-o col-md-1 non-printable" click.trigger="$parent.removeWidget(f)"></i>-->
+    </div>
+  </div>
+</template>
