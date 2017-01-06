@@ -11,7 +11,7 @@ define('app',["require", "exports"], function (require, exports) {
                 { route: 'projects', moduleId: './apps/projects/index', nav: true, title: 'Projects' },
                 { route: 'flow-builder', moduleId: './apps/flow-builder/index', nav: false, title: 'Flow Builder' },
                 { route: 'form-builder', moduleId: './apps/form-builder/index', nav: false, title: 'Form Builder' },
-                { route: 'harness', moduleId: './apps/harness/index', nav: true, title: 'Harness' }
+                { route: 'harness', moduleId: './apps/harness/docs/index', nav: true, title: 'Harness' }
             ]);
             this.router = router;
         };
@@ -371,6 +371,55 @@ define('apps/flow-builder/toolbox',["require", "exports"], function (require, ex
     exports.FlowToolbox = FlowToolbox;
 });
 
+define('apps/form-builder/message',["require", "exports"], function (require, exports) {
+    "use strict";
+    var FIELDUPDATED = (function () {
+        function FIELDUPDATED(page, field) {
+            this.page = page;
+            this.field = field;
+        }
+        return FIELDUPDATED;
+    }());
+    exports.FIELDUPDATED = FIELDUPDATED;
+    var FIELDADDED = (function () {
+        function FIELDADDED(page, field) {
+            this.page = page;
+            this.field = field;
+        }
+        return FIELDADDED;
+    }());
+    exports.FIELDADDED = FIELDADDED;
+    var FIELDTOEDIT = (function () {
+        function FIELDTOEDIT(field) {
+            this.field = field;
+        }
+        return FIELDTOEDIT;
+    }());
+    exports.FIELDTOEDIT = FIELDTOEDIT;
+    var FIELDREMOVED = (function () {
+        function FIELDREMOVED(page, field) {
+            this.page = page;
+            this.field = field;
+        }
+        return FIELDREMOVED;
+    }());
+    exports.FIELDREMOVED = FIELDREMOVED;
+    var PAGEADDED = (function () {
+        function PAGEADDED(page) {
+            this.page = page;
+        }
+        return PAGEADDED;
+    }());
+    exports.PAGEADDED = PAGEADDED;
+    var PAGEREMOVED = (function () {
+        function PAGEREMOVED(page) {
+            this.page = page;
+        }
+        return PAGEREMOVED;
+    }());
+    exports.PAGEREMOVED = PAGEREMOVED;
+});
+
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -586,75 +635,9 @@ define('apps/form-builder/toolbox',["require", "exports", "aurelia-framework", "
     exports.FormToolbox = FormToolbox;
 });
 
-define('apps/harness/index',["require", "exports"], function (require, exports) {
-    "use strict";
-    var Harness = (function () {
-        function Harness() {
-            this.menus = [
-                {
-                    id: 'dashboard',
-                    title: 'Dashboard'
-                },
-                {
-                    id: 'typography',
-                    title: 'Typography'
-                },
-                {
-                    id: 'elements',
-                    title: 'UI Elements',
-                    widgets: [
-                        { id: 'elements', title: 'Elements' },
-                        { id: 'buttons', title: 'Buttons' },
-                        { id: 'icons', title: 'Icons' },
-                        { id: 'tree', title: 'Treeview' },
-                    ]
-                }
-            ];
-        }
-        Harness.prototype.selectMenu = function (menu) {
-            var nm = menu.current.id;
-            menu.current.active = menu.current.hasOwnProperty('active') ? !menu.current.active : true;
-            if (menu.parent && menu.parent.id) {
-                nm = menu.parent.id + '/' + nm;
-            }
-            if (menu.current.widgets) {
-            }
-            else {
-                console.info('***', nm);
-                this.router.navigate(nm);
-            }
-        };
-        Harness.prototype.configureRouter = function (config, router) {
-            var conf = [
-                { route: '', moduleId: './docs/dashboard/dashboard', nav: false }
-            ];
-            this.menus.forEach(function (menu) {
-                if (menu.hasOwnProperty('widgets')) {
-                    menu['widgets'].forEach(function (submenu) {
-                        conf.push({
-                            route: menu.id + '/' + submenu.id,
-                            moduleId: './docs/' + menu.id + '/' + submenu.id,
-                            nav: true
-                        });
-                    });
-                }
-                else {
-                    conf.push({
-                        route: menu.id,
-                        moduleId: './docs/' + menu.id + '/' + menu.id,
-                        nav: true
-                    });
-                }
-            });
-            config.map(conf);
-            this.router = router;
-        };
-        Harness.prototype.bind = function () {
-        };
-        return Harness;
-    }());
-    exports.Harness = Harness;
-});
+
+
+define("apps/harness/index", [],function(){});
 
 define('apps/projects/index',["require", "exports"], function (require, exports) {
     "use strict";
@@ -787,9 +770,117 @@ define('resources/view-models/list-view-model',["require", "exports"], function 
     exports.ListViewModel = ListViewModel;
 });
 
+define('apps/harness/docs/navigations',["require", "exports"], function (require, exports) {
+    "use strict";
+    exports.Menus = [
+        {
+            id: 'dashboard',
+            title: 'Dashboard',
+            menus: []
+        }, {
+            id: 'typography',
+            title: 'Typography',
+            menus: []
+        }, {
+            id: 'elements',
+            title: 'UI Elements',
+            menus: [
+                { id: 'elements', title: 'Elements', menus: [] },
+                { id: 'buttons', title: 'Buttons', menus: [] },
+                { id: 'icons', title: 'Icons', menus: [] },
+                { id: 'tree', title: 'Treeview', menus: [] },
+            ]
+        }, {
+            id: 'widgets',
+            title: 'Widgets',
+            menus: [
+                { id: 'tabs', title: 'Tabs', menus: [] }
+            ]
+        }
+    ];
+    function MenuPath(menu, parentMenu) {
+        var id = ('/' + menu.id).repeat(2);
+        return './components' + (parentMenu ? '/' + parentMenu.id : '') + id;
+    }
+    exports.MenuPath = MenuPath;
+    ;
+});
+
+define('apps/harness/docs/index',["require", "exports", "./navigations"], function (require, exports, navigations_1) {
+    "use strict";
+    var Harness = (function () {
+        function Harness() {
+            this.isSidebarExpanded = false;
+        }
+        Harness.prototype.selectMenu = function (menu) {
+            var nm = menu.current.id;
+            menu.current.active = menu.current.hasOwnProperty('active') ? !menu.current.active : true;
+            if (menu.parent && menu.parent.id) {
+                nm = menu.parent.id + '/' + nm;
+            }
+            if (menu.current.widgets) {
+            }
+            else {
+                this.router.navigate(nm);
+            }
+        };
+        Harness.prototype.configureRouter = function (config, router) {
+            var conf = [
+                { route: '', moduleId: navigations_1.MenuPath(navigations_1.Menus[0], null), nav: true }
+            ];
+            navigations_1.Menus.forEach(function (menu) {
+                if (menu.menus.length) {
+                    menu.menus.forEach(function (submenu) {
+                        conf.push({
+                            route: menu.id + '/' + submenu.id,
+                            moduleId: navigations_1.MenuPath(submenu, menu),
+                            nav: true
+                        });
+                    });
+                }
+                else {
+                    conf.push({
+                        route: menu.id,
+                        moduleId: navigations_1.MenuPath(menu, null),
+                        nav: true
+                    });
+                }
+            });
+            config.map(conf);
+            this.router = router;
+        };
+        return Harness;
+    }());
+    exports.Harness = Harness;
+});
+
+
+
+define("apps/harness/utils/moment", [],function(){});
+
 
 
 define("modules/fields/checkbox/checkbox", [],function(){});
+
+define('modules/fields/header/design',["require", "exports"], function (require, exports) {
+    "use strict";
+    var FieldHeaderConf = (function () {
+        function FieldHeaderConf() {
+        }
+        return FieldHeaderConf;
+    }());
+    exports.FieldHeaderConf = FieldHeaderConf;
+});
+
+define('modules/fields/textbox/design',["require", "exports"], function (require, exports) {
+    "use strict";
+    var FieldTextboxConf = (function () {
+        function FieldTextboxConf() {
+        }
+        return FieldTextboxConf;
+    }());
+    exports.FieldTextboxConf = FieldTextboxConf;
+});
 
 
 
@@ -798,6 +889,33 @@ define("modules/triggers/base/base", [],function(){});
 
 
 define("modules/triggers/timer/timer", [],function(){});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('resources/elements/nav-bar/nav-bar',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    var NavBar = (function () {
+        function NavBar() {
+        }
+        return NavBar;
+    }());
+    __decorate([
+        aurelia_framework_1.bindable,
+        __metadata("design:type", Object)
+    ], NavBar.prototype, "router", void 0);
+    NavBar = __decorate([
+        aurelia_framework_1.customElement('nav-bar'),
+        __metadata("design:paramtypes", [])
+    ], NavBar);
+    exports.NavBar = NavBar;
+});
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -945,33 +1063,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('resources/elements/nav-bar/nav-bar',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
-    "use strict";
-    var NavBar = (function () {
-        function NavBar() {
-        }
-        return NavBar;
-    }());
-    __decorate([
-        aurelia_framework_1.bindable,
-        __metadata("design:type", Object)
-    ], NavBar.prototype, "router", void 0);
-    NavBar = __decorate([
-        aurelia_framework_1.customElement('nav-bar'),
-        __metadata("design:paramtypes", [])
-    ], NavBar);
-    exports.NavBar = NavBar;
-});
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 define('apps/harness/components/breadcrumbs/breadcrumbs',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
     "use strict";
     var Breadcrumbs = (function () {
@@ -1035,163 +1126,161 @@ define('apps/harness/components/table/table',["require", "exports"], function (r
     exports.UITable = UITable;
 });
 
-define('apps/harness/docs/breadcrumbs/breadcrumbs',["require", "exports"], function (require, exports) {
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('apps/harness/components/tabs/tabs',["require", "exports", "aurelia-framework", "aurelia-framework"], function (require, exports, aurelia_framework_1, aurelia_framework_2) {
     "use strict";
-    var SampleBreadcrumbs = (function () {
-        function SampleBreadcrumbs() {
+    var Tabs = (function () {
+        function Tabs() {
         }
-        return SampleBreadcrumbs;
+        return Tabs;
     }());
-    exports.SampleBreadcrumbs = SampleBreadcrumbs;
+    Tabs = __decorate([
+        aurelia_framework_2.processContent(function (viewCompiler, viewResources, element, instruction) {
+        }),
+        aurelia_framework_1.inject(Element, aurelia_framework_2.ViewCompiler, aurelia_framework_2.ViewResources, aurelia_framework_2.Container, aurelia_framework_2.TargetInstruction, aurelia_framework_2.BindingEngine),
+        __metadata("design:paramtypes", [])
+    ], Tabs);
+    exports.Tabs = Tabs;
+    ;
 });
 
-define('apps/harness/docs/dashboard/dashboard',["require", "exports"], function (require, exports) {
+define('apps/harness/docs/components/breadcrumbs/breadcrumbs',["require", "exports"], function (require, exports) {
     "use strict";
-    var SampleDashboard = (function () {
-        function SampleDashboard() {
+    var BreadcrumbsSample = (function () {
+        function BreadcrumbsSample() {
         }
-        return SampleDashboard;
+        return BreadcrumbsSample;
     }());
-    exports.SampleDashboard = SampleDashboard;
+    exports.BreadcrumbsSample = BreadcrumbsSample;
 });
 
-define('apps/harness/docs/elements/buttons',["require", "exports"], function (require, exports) {
+define('apps/harness/docs/components/dashboard/dashboard',["require", "exports"], function (require, exports) {
     "use strict";
-    var SampleButtons = (function () {
-        function SampleButtons() {
+    var DashboardSample = (function () {
+        function DashboardSample() {
         }
-        return SampleButtons;
+        return DashboardSample;
     }());
-    exports.SampleButtons = SampleButtons;
+    exports.DashboardSample = DashboardSample;
 });
 
-define('apps/harness/docs/elements/elements',["require", "exports"], function (require, exports) {
+define('apps/harness/docs/components/elements/buttons',["require", "exports"], function (require, exports) {
     "use strict";
-    var SampleElements = (function () {
-        function SampleElements() {
+    var ButtonsSample = (function () {
+        function ButtonsSample() {
         }
-        return SampleElements;
+        return ButtonsSample;
     }());
-    exports.SampleElements = SampleElements;
+    exports.ButtonsSample = ButtonsSample;
 });
 
-define('apps/harness/docs/elements/icons',["require", "exports"], function (require, exports) {
+define('apps/harness/docs/components/elements/elements',["require", "exports"], function (require, exports) {
     "use strict";
-    var SampleIcons = (function () {
-        function SampleIcons() {
+    var ElementsSample = (function () {
+        function ElementsSample() {
         }
-        return SampleIcons;
+        return ElementsSample;
     }());
-    exports.SampleIcons = SampleIcons;
+    exports.ElementsSample = ElementsSample;
 });
 
-define('apps/harness/docs/elements/tree',["require", "exports"], function (require, exports) {
+define('apps/harness/docs/components/elements/icons',["require", "exports"], function (require, exports) {
     "use strict";
-    var SampleTree = (function () {
-        function SampleTree() {
+    var IconsSample = (function () {
+        function IconsSample() {
         }
-        return SampleTree;
+        return IconsSample;
     }());
-    exports.SampleTree = SampleTree;
+    exports.IconsSample = IconsSample;
 });
 
-define('apps/harness/docs/layout/side-main',["require", "exports"], function (require, exports) {
+define('apps/harness/docs/components/elements/tree',["require", "exports"], function (require, exports) {
     "use strict";
-    var SampleLayoutSideMain = (function () {
-        function SampleLayoutSideMain() {
+    var TreeSample = (function () {
+        function TreeSample() {
         }
-        return SampleLayoutSideMain;
+        return TreeSample;
     }());
-    exports.SampleLayoutSideMain = SampleLayoutSideMain;
+    exports.TreeSample = TreeSample;
 });
 
-define('apps/harness/docs/table/table',["require", "exports"], function (require, exports) {
+define('apps/harness/docs/components/layout/side-main',["require", "exports"], function (require, exports) {
     "use strict";
-    var SampleTable = (function () {
-        function SampleTable() {
+    var LayoutSideMainSample = (function () {
+        function LayoutSideMainSample() {
         }
-        return SampleTable;
+        return LayoutSideMainSample;
     }());
-    exports.SampleTable = SampleTable;
+    exports.LayoutSideMainSample = LayoutSideMainSample;
 });
 
-define('apps/harness/docs/typography/typography',["require", "exports"], function (require, exports) {
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('apps/harness/docs/components/sidebar/sidebar',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
     "use strict";
-    var SampleTypography = (function () {
-        function SampleTypography() {
+    var Sidebar = (function () {
+        function Sidebar() {
+            this.isExpanded = true;
         }
-        return SampleTypography;
+        Sidebar.prototype.attach = function () {
+            this.isExpanded = localStorage.getItem('sidebarIsExpanded') === undefined ? true : localStorage.getItem('sidebarIsExpanded') === 'true';
+        };
+        Sidebar.prototype.toggle = function () {
+            this.isExpanded = !this.isExpanded;
+            localStorage.setItem('sidebarIsExpanded', this.isExpanded.toString());
+        };
+        return Sidebar;
     }());
-    exports.SampleTypography = SampleTypography;
+    __decorate([
+        aurelia_framework_1.bindable,
+        __metadata("design:type", Boolean)
+    ], Sidebar.prototype, "isExpanded", void 0);
+    exports.Sidebar = Sidebar;
 });
 
-define('apps/form-builder/message',["require", "exports"], function (require, exports) {
+define('apps/harness/docs/components/table/table',["require", "exports"], function (require, exports) {
     "use strict";
-    var FIELDUPDATED = (function () {
-        function FIELDUPDATED(page, field) {
-            this.page = page;
-            this.field = field;
+    var TableSample = (function () {
+        function TableSample() {
         }
-        return FIELDUPDATED;
+        return TableSample;
     }());
-    exports.FIELDUPDATED = FIELDUPDATED;
-    var FIELDADDED = (function () {
-        function FIELDADDED(page, field) {
-            this.page = page;
-            this.field = field;
-        }
-        return FIELDADDED;
-    }());
-    exports.FIELDADDED = FIELDADDED;
-    var FIELDTOEDIT = (function () {
-        function FIELDTOEDIT(field) {
-            this.field = field;
-        }
-        return FIELDTOEDIT;
-    }());
-    exports.FIELDTOEDIT = FIELDTOEDIT;
-    var FIELDREMOVED = (function () {
-        function FIELDREMOVED(page, field) {
-            this.page = page;
-            this.field = field;
-        }
-        return FIELDREMOVED;
-    }());
-    exports.FIELDREMOVED = FIELDREMOVED;
-    var PAGEADDED = (function () {
-        function PAGEADDED(page) {
-            this.page = page;
-        }
-        return PAGEADDED;
-    }());
-    exports.PAGEADDED = PAGEADDED;
-    var PAGEREMOVED = (function () {
-        function PAGEREMOVED(page) {
-            this.page = page;
-        }
-        return PAGEREMOVED;
-    }());
-    exports.PAGEREMOVED = PAGEREMOVED;
+    exports.TableSample = TableSample;
 });
 
-define('modules/fields/textbox/design',["require", "exports"], function (require, exports) {
+define('apps/harness/docs/components/typography/typography',["require", "exports"], function (require, exports) {
     "use strict";
-    var FieldTextboxConf = (function () {
-        function FieldTextboxConf() {
+    var TypographySample = (function () {
+        function TypographySample() {
         }
-        return FieldTextboxConf;
+        return TypographySample;
     }());
-    exports.FieldTextboxConf = FieldTextboxConf;
+    exports.TypographySample = TypographySample;
 });
 
-define('modules/fields/header/design',["require", "exports"], function (require, exports) {
+define('apps/harness/docs/components/tabs/tabs',["require", "exports"], function (require, exports) {
     "use strict";
-    var FieldHeaderConf = (function () {
-        function FieldHeaderConf() {
+    var TabsSample = (function () {
+        function TabsSample() {
         }
-        return FieldHeaderConf;
+        return TabsSample;
     }());
-    exports.FieldHeaderConf = FieldHeaderConf;
+    exports.TabsSample = TabsSample;
 });
 
 define('text!app.html', ['module'], function(module) { module.exports = "<template>\n  <require from=\"bootstrap/css/bootstrap.css\"></require>\n\n  <loading-indicator loading.bind=\"router.isNavigating || api.isRequesting\"></loading-indicator>\n\n  <nav-bar router.bind=\"router\"></nav-bar>\n\n  <router-view></router-view>\n</template>\n"; });
@@ -1207,11 +1296,13 @@ define('text!apps/form-builder/builder.html', ['module'], function(module) { mod
 define('text!apps/form-builder/conf.html', ['module'], function(module) { module.exports = "<template>\n    <div>\n        <ul class=\"nav navbar-nav\">\n            <li class=\"active\"><a href=\"#\">Element</a></li>\n            <li><a href=\"#\">Page</a></li>\n            <li><a href=\"#\">App</a></li>\n        </ul>\n    </div>\n    <compose if.bind=\"target\"\n      model=\"target\" \n      view-model=\"../../modules/fields/${target.type}/design\"></compose>\n</template>\n"; });
 define('text!apps/form-builder/index.html', ['module'], function(module) { module.exports = "<template>\n    <style>\n        html, body {\n            height: 100%;\n        }\n        body {\n          padding-top: 50px;\n        }\n        .builder {\n            display: flex;\n            height: 100%;\n            border-top: 1px solid #252525;\n        }\n        .sidebar {\n            width: 200px;\n            background: #4b4b4b;\n            border-right: 1px solid #252525;\n        }\n        .canvas {\n            flex-grow: 1;\n        }\n        .configurator {\n            width: 200px;\n            background: #4b4b4b;\n            border-left: 1px solid #252525;\n        }\n    </style>\n    <div class=\"builder\">\n        <compose class=\"sidebar\" view-model=\"./toolbox\"></compose>\n        <compose class=\"canvas\" view-model=\"./builder\"></compose>\n        <compose class=\"configurator\" view-model=\"./conf\"></compose>\n    </div>\n</template>\n"; });
 define('text!apps/form-builder/toolbox.html', ['module'], function(module) { module.exports = "<template>\n  <!--<button click.delegate=\"printReport()\" type=\"button\" class=\"btn btn-primary fa fa-print\"> Print</button>\n  <button click.delegate=\"clearReport()\" type=\"button\" class=\"btn btn-warning fa fa-remove\"> Clear Report</button>-->\n  <div class=\"panel panel-default\">\n    <div class=\"panel-heading\">\n      <h3 class=\"panel-title\">Tool Box</h3>\n    </div>\n    <div class=\"panel-body\">\n      <div sortable.bind=\"sortOptions\">\n        <div repeat.for=\"t of widgets\" \n          data-field-type=\"${t.type}\"\n          style=\"border:1px solid #ddd\">${t.title}</div>\n      </div>\n    </div>\n  </div>\n</template>\n"; });
-define('text!apps/harness/index.html', ['module'], function(module) { module.exports = "<template>\n  <style>\n    html, body {\n      height: 100%;\n    }\n    body {\n      padding-top: 50px;\n    }\n    div.stage {\n      height: 100%;\n    }\n    div.stage > .lo-s-m > .side {\n      min-width: 200px;\n      background: #f2f2f2;\n      border-right: 1px solid #ccc;\n      overflow-y: auto;\n      z-index: 101;\n    }\n    div.stage > .lo-s-m > .main {\n      overflow-y: auto;\n      position: relative;\n    }\n    div.stage > .lo-s-m .mainstage {\n      padding: 40px 15px 15px;\n      margin: 0;\n      background: #fff;\n    }\n    /* side menu */\n    div.stage > .lo-s-m > .side .nav-list a {\n      cursor: pointer;\n    }\n    div.stage > .lo-s-m > .side .nav-list li {\n      border-top: 1px solid #fcfcfc;\n      border-bottom: 1px solid #e5e5e5;\n    }\n    div.stage > .lo-s-m > .side .nav-list li.active,\n    div.stage > .lo-s-m > .side .nav-list li ul {\n      background: #fff;\n    }\n    div.stage > .lo-s-m > .side .nav-list li ul {\n      border-top: 1px solid #e5e5e5;\n    }\n\n    /* breadcrumbs */\n    .breadcrumbs {\n      border-bottom: 1px solid #e5e5e5;\n      background-color: #f5f5f5;\n      min-height: 41px;\n      line-height: 40px;\n      padding: 0 15px;\n      display: block;\n      width: 100%;\n      position: fixed;\n      top: 50px;\n      left: 0;\n      padding: 0 15px 0 215px;\n      z-index: 100;\n    }\n    .page-header {\n      margin-top: 0;\n    }\n  </style>\n\n  <require from=\"./components/layout/side-main\"></require>\n  <require from=\"./components/navigator/navigator\"></require>\n  <require from=\"./components/breadcrumbs/breadcrumbs\"></require>\n\n  \n  <div class=\"stage\">\n    <layout-side-main containerless>\n      <div slot=\"side\">\n          <navigator \n            select.call=\"selectMenu(menu)\"\n            menus.bind=\"menus\"></navigator>\n      </div>\n\n      <div slot=\"main\">\n          <breadcrumbs router.bind=\"router\" if.bind=\"router.container.parent\">\n            sub content\n          </breadcrumbs>\n          <div class=\"mainstage\"><router-view></router-view></div>\n        </div>\n      </div>\n    </layout-side-main>\n  </div>\n</template>\n"; });
 define('text!apps/projects/index.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"container\">Projects</div>\n</template>\n"; });
+define('text!apps/harness/docs/index.html', ['module'], function(module) { module.exports = "<template>\n  <style>\n    html, body {\n      height: 100%;\n    }\n    body {\n      padding-top: 50px;\n    }\n    .app-stage {\n      height: 100%;\n    }\n    .app-stage > .lo-s-m > .side {\n      min-width: 50px;\n      max-width: 50px;\n      background: #f2f2f2;\n      border-right: 1px solid #ccc;\n      overflow-y: auto;\n      z-index: 101;\n    }\n    .app-stage.side-expanded > .lo-s-m > .side {\n      max-width: 200px;\n      min-width: 200px;\n    }\n\n    .app-stage > .lo-s-m > .main,\n    .app-main {\n      display: flex;\n      flex-flow: column;\n      height: 100%;\n    }\n    .app-mainstage {\n      padding: 20px 15px 15px;\n      margin: 0;\n      background: #fff;\n      flex-grow: 1;\n      overflow-y: auto;\n    }\n    \n    /* side menu */\n    .app-navigation .nav-list a {\n      cursor: pointer;\n    }\n    .app-navigation .nav-list li {\n      border-top: 1px solid #fcfcfc;\n      border-bottom: 1px solid #e5e5e5;\n    }\n    .app-navigation .nav-list li.active,\n    .app-navigation .nav-list li ul {\n      background: #fff;\n    }\n    .app-navigation .nav-list li ul {\n      border-top: 1px solid #e5e5e5;\n    }\n\n    /* breadcrumbs */\n    .app-breadcrumbs {\n      border-bottom: 1px solid #e5e5e5;\n      background-color: #f5f5f5;\n      min-height: 41px;\n      line-height: 40px;\n      padding: 0 15px;\n      display: block;\n      width: 100%;\n      /*position: fixed;\n      top: 50px;\n      left: 0;\n      padding: 0 15px 0 215px;*/\n      padding: 0 15px;\n      z-index: 100;\n    }\n    .app-page-header {\n      margin-top: 0;\n    }\n  </style>\n\n  <require from=\"../components/layout/side-main\"></require>\n  <require from=\"../components/navigator/navigator\"></require>\n  <require from=\"../components/breadcrumbs/breadcrumbs\"></require>\n\n  <require from=\"./components/sidebar/sidebar\"></require>\n\n\n  <layout-side-main class=\"app-stage\" class.bind=\"isSidebarExpanded&&'side-expanded'\">\n    <sidebar class=\"app-navigation\" \n      slot=\"side\" is-expanded.two-way=\"isSidebarExpanded\">\n      <h3>Logo</h3>\n      <navigator \n        select.call=\"selectMenu(menu)\"\n        menus.bind=\"menus\"></navigator>\n    </sidebar>\n\n    <div class=\"app-main\" slot=\"main\">\n        <breadcrumbs class=\"app-breadcrumbs\" \n          router.bind=\"router\" if.bind=\"router.container.parent\">\n          sub content\n        </breadcrumbs>\n        <div class=\"app-mainstage\"><router-view></router-view></div>\n      </div>\n    </div>\n  </layout-side-main>\n</template>\n"; });
 define('text!modules/fields/checkbox/checkbox.html', ['module'], function(module) { module.exports = ""; });
-define('text!modules/fields/header/header.html', ['module'], function(module) { module.exports = "<template>\n  <div>\n    <div class=\"pull-right\">\n      Funnyroad 123<br />\n      1010 SOME-STATE<br />\n      USA<br />\n    </div>\n\n    <h2>Abstract-IT &trade;</h2>\n    <p>Delivering concrete solutions</p> \n  </div>\n</template>\n"; });
+define('text!modules/fields/textbox/design.html', ['module'], function(module) { module.exports = "<template>\n  label: <input type=\"text\" value.bind=\"target.label\"><br>\n  Required: <input type=\"checkbox\" value='1'> Yes<br>\n  Readonly: <input type=\"checkbox\" value='1'> Yes<br>\n</template>\n"; });
 define('text!modules/fields/textbox/textbox.html', ['module'], function(module) { module.exports = "<template>\n  <!-- read view & run view -->\n  <div>\n    <label>\n      ${model.label}:\n      <input type=\"text\">\n    </label>\n  </div>\n</template>\n"; });
+define('text!modules/fields/header/design.html', ['module'], function(module) { module.exports = "<template>\n  label: <input type=\"text\" value.bind=\"target.label\"><br>\n  Required: <input type=\"checkbox\" value='1'> Yes<br>\n  Readonly: <input type=\"checkbox\" value='1'> Yes<br>\n</template>\n"; });
+define('text!modules/fields/header/header.html', ['module'], function(module) { module.exports = "<template>\n  <div>\n    <div class=\"pull-right\">\n      Funnyroad 123<br />\n      1010 SOME-STATE<br />\n      USA<br />\n    </div>\n\n    <h2>Abstract-IT &trade;</h2>\n    <p>Delivering concrete solutions</p> \n  </div>\n</template>\n"; });
 define('text!resources/elements/modal/modal-body.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"modal-body\">\n    <compose model.bind=\"contentModel\" view-model.bind=\"contentView\"></compose>\n    <slot></slot>\n  </div>\n</template>\n"; });
 define('text!resources/elements/modal/modal-footer.html', ['module'], function(module) { module.exports = "<template>  \n  <div class=\"modal-footer\">\n    <button type=\"button\" class=\"btn btn-default\" repeat.for=\"button of buttons\">${button}</button>\n  </div>\n</template>\n"; });
 define('text!resources/elements/modal/modal-header.html', ['module'], function(module) { module.exports = "<template>  \n  <div class=\"modal-header\">\n    <button type=\"button\" class=\"close\" \n      data-dismiss=\"modal\" aria-label=\"Close\"\n      click.trigger=\"close()\"\n      if.bind=\"close\">\n      <span aria-hidden=\"true\">&times;</span>\n    </button>\n    <h4 class=\"modal-title\">${title}</h4>\n  </div>\n</template> \n"; });
@@ -1219,17 +1310,18 @@ define('text!resources/elements/modal/modal.html', ['module'], function(module) 
 define('text!resources/elements/nav-bar/nav-bar.html', ['module'], function(module) { module.exports = "<template> \n  <nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n      <div class=\"navbar-header\">\n        <a class=\"navbar-brand\" href=\"#\">\n          <i class=\"fa fa-user\"></i>\n          <span>${router.title}</span>\n        </a>\n      </div>\n    </nav>\n\n    <nav class=\"navbar navbar-default navbar-fixed-top\" role=\"navigation\">\n      <div class=\"navbar-header\">\n        <button type=\"button\" class=\"navbar-toggle\" data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1\">\n          <span class=\"sr-only\">Toggle Navigation</span>\n          <span class=\"icon-bar\"></span>\n          <span class=\"icon-bar\"></span>\n          <span class=\"icon-bar\"></span>\n        </button>\n        <a class=\"navbar-brand\" href=\"#\">\n          <i class=\"fa fa-home\"></i>\n          <span>${router.title}</span>\n        </a>\n      </div>\n\n      <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\n        <ul class=\"nav navbar-nav\">\n          <li repeat.for=\"row of router.navigation\" class=\"${row.isActive ? 'active' : ''}\">\n            <a data-toggle=\"collapse\" data-target=\"#bs-example-navbar-collapse-1.in\" href.bind=\"row.href\">${row.title}</a>\n          </li>\n        </ul>\n\n        <ul class=\"nav navbar-nav navbar-right\">\n          <li class=\"loader\" if.bind=\"router.isNavigating\">\n            <i class=\"fa fa-spinner fa-spin fa-2x\"></i>\n          </li>\n        </ul>\n      </div>\n    </nav>\n  </template>\n"; });
 define('text!apps/harness/components/breadcrumbs/breadcrumbs.html', ['module'], function(module) { module.exports = "<template>\n  <style>\n    .breadcrumbs {\n      display: flex;\n    }\n    .breadcrumbs div:first-child {\n      flex-grow: 1;\n    }\n  </style>\n  \n  <div class=\"breadcrumbs\">\n    <div>Home > ${router.currentInstruction.config.route}</div>\n    <slot></slot>\n  </div>\n</template>\n"; });
 define('text!apps/harness/components/layout/side-main.html', ['module'], function(module) { module.exports = "<template>\n  <style>\n    .lo-s-m {\n      display: flex;\n      height: 100%\n    }\n    .lo-s-m > .main {\n      flex-grow: 1;\n    }\n  </style>\n  <div class=\"lo-s-m\">\n    <div class=\"side\">\n      <slot name=\"side\"></slot>\n    </div>\n\n    <div class=\"main\">\n      <slot name=\"main\"></div>\n    </div>\n  </div>\n</template>\n"; });
-define('text!apps/harness/components/navigator/navigator.html', ['module'], function(module) { module.exports = "<template>\n  <style>\n    .nav-list {\n      list-style: none;\n      margin: 0;\n      padding: 0;\n    }\n    .nav-list li {\n      display: block;\n      padding: 0;\n      margin: 0;\n      border: 0;\n      position: relative;\n    }\n    .nav-list a {\n      padding: 10px 15px;\n      display: block;\n    }\n    .nav-list li ul {\n      margin: 0;\n      padding: 0;\n      display: none;\n    }\n    .nav-list li.open ul {\n      display: block;\n    }\n    .nav-list li ul a {\n      padding-left: 2em;\n      text-decoration: none;\n    }\n  </style>\n  <ul class=\"nav nav-list\">\n    <li repeat.for=\"menu of menus\" class=\"${menu.active?'open':''}\">\n      <a click.trigger=\"select({menu: {current: menu}})\">${menu.title}</a>\n      <ul class=\"sub-menu\" if.bind=\"menu.widgets\">\n        <li repeat.for=\"submenu of menu.widgets\">\n          <a click.trigger=\"select({menu: {current: submenu, parent: menu}})\">${submenu.title}</a>\n        </li>\n      </ul>\n    </li>\n  </ul>\n</template>\n"; });
 define('text!apps/harness/components/table/table.html', ['module'], function(module) { module.exports = "<template>\n  Table component\n</template>\n"; });
-define('text!apps/harness/docs/breadcrumbs/breadcrumbs.html', ['module'], function(module) { module.exports = "<template>Breadcrumbs demo</template>\n"; });
-define('text!apps/harness/docs/dashboard/dashboard.html', ['module'], function(module) { module.exports = "<template>\n  Dashboard Sample\n</template>\n"; });
-define('text!apps/harness/docs/elements/buttons.html', ['module'], function(module) { module.exports = "<template>\n  Elements/buttons Sample\n</template>\n"; });
-define('text!apps/harness/docs/elements/elements.html', ['module'], function(module) { module.exports = "<template>\n  Elements/elements Sample\n</template>\n"; });
-define('text!apps/harness/docs/elements/icons.html', ['module'], function(module) { module.exports = "<template>\n  Elements/icons Sample\n</template>\n"; });
-define('text!apps/harness/docs/elements/tree.html', ['module'], function(module) { module.exports = "<template>\n  Elements/tree Sample\n</template>\n"; });
-define('text!apps/harness/docs/layout/side-main.html', ['module'], function(module) { module.exports = "<template>\nYour Template Here\n</template>\n"; });
-define('text!apps/harness/docs/table/table.html', ['module'], function(module) { module.exports = "<template>\nTable Demo\n</template>\n"; });
-define('text!apps/harness/docs/typography/typography.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"page-header\">\n    <h1>\n      Typography\n      <small>\n        <i class=\"icon-double-angle-right\"></i>\n        This is page-header (.page-header &gt; h1)\n      </small>\n    </h1>\n  </div><!-- /.page-header -->\n\n  <div class=\"row\">\n    <div class=\"col-xs-12\">\n      <!-- PAGE CONTENT BEGINS -->\n\n      <div class=\"row\">\n        <div class=\"col-sm-6\">\n          <h4>Headings & Paragraphs</h4>\n\n          <hr />\n          <h1>h1. Heading 1</h1>\n          <p class=\"lead\">\n            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.\n          </p>\n          <h2>h2. Heading 2</h2>\n          <p>\n            Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec ullamcorper nulla non metus auctor fringilla. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Donec ullamcorper nulla non metus auctor fringilla.\n          </p>\n          <h3>h3. Heading 3</h3>\n          <p>\n            Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.\n          </p>\n          <h4>h4. Heading 4</h4>\n          <h5>h5. Heading 5</h5>\n          <h6>h6. Heading 6</h6>\n        </div><!-- /span -->\n\n        <div class=\"col-sm-6\">\n          <div class=\"widget-box\">\n            <div class=\"widget-header widget-header-flat\">\n              <h4>Lists</h4>\n            </div>\n\n            <div class=\"widget-body\">\n              <div class=\"widget-main\">\n                <div class=\"row\">\n                  <div class=\"col-sm-6\">\n                    <ul>\n                      <li>Unordered List Item</li>\n\n                      <li>\n                        <small>List Item in small tag</small>\n                      </li>\n\n                      <li>\n                        <b>List Item in bold tag</b>\n                      </li>\n\n                      <li>\n                        <i>List Item in italics tag</i>\n                      </li>\n\n                      <li>\n                        <ul class=\"list-unstyled\">\n                          <li>\n                            <i class=\"icon-caret-right blue\"></i>\n                            Nested List Item\n                          </li>\n\n                          <li>\n                            <i class=\"icon-caret-right blue\"></i>\n                            Nested List Item\n                          </li>\n\n                          <li>\n                            <i class=\"icon-caret-right blue\"></i>\n                            Nested List Item\n                          </li>\n                        </ul>\n                      </li>\n                      <li>Unordered List Item which is a longer item and may break into more lines.</li>\n\n                      <li>\n                        <strong>List Item in strong tag</strong>\n                      </li>\n\n                      <li>\n                        <em>List Item in emphasis tag</em>\n                      </li>\n                    </ul>\n                  </div>\n\n                  <div class=\"col-sm-6\">\n                    <ol>\n                      <li>Ordered List Item</li>\n                      <li class=\"text-primary\">.text-primary Ordered List Item</li>\n                      <li class=\"text-danger\">.text-danger Ordered List Item</li>\n\n                      <li class=\"text-success\">\n                        <b>.text-success</b>\n                        Ordered List Item\n                      </li>\n                      <li class=\"text-warning\">.text-warning Ordered List Item</li>\n                      <li class=\"text-muted\">.text-muted Ordered List Item</li>\n                    </ol>\n                  </div>\n                </div>\n\n                <hr />\n                <div class=\"row\">\n                  <div class=\"col-xs-12\">\n                    <ul class=\"list-unstyled spaced\">\n                      <li>\n                        <i class=\"icon-bell bigger-110 purple\"></i>\n                        List with custom icons and more space\n                      </li>\n\n                      <li>\n                        <i class=\"icon-ok bigger-110 green\"></i>\n                        Unordered List Item # 2\n                      </li>\n\n                      <li>\n                        <i class=\"icon-remove bigger-110 red\"></i>\n                        Unordered List Item # 3\n                      </li>\n                    </ul>\n\n                    <ul class=\"list-unstyled spaced2\">\n                      <li>\n                        <i class=\"icon-circle green\"></i>\n                        Even more space\n                      </li>\n\n                      <li class=\"text-warning bigger-110 orange\">\n                        <i class=\"icon-warning-sign\"></i>\n                        Unordered List Item # 5\n                      </li>\n\n                      <li class=\"muted\">\n                        <i class=\"icon-angle-right bigger-110\"></i>\n                        Unordered List Item # 6\n                      </li>\n\n                      <li>\n                        <ul class=\"list-inline\">\n                          <li>\n                            <i class=\"icon-share-alt green bigger-110\"></i>\n                            Inline List Item # 1\n                          </li>\n                          <li>List Item # 2</li>\n                          <li>List Item # 3</li>\n                        </ul>\n                      </li>\n                    </ul>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div><!-- /span -->\n      </div>\n\n      <hr />\n      <div class=\"row\">\n        <div class=\"col-sm-4\">\n          <div class=\"widget-box\">\n            <div class=\"widget-header widget-header-flat\">\n              <h4 class=\"smaller\">\n                <i class=\"icon-quote-left smaller-80\"></i>\n                BlockQuote & Address\n              </h4>\n            </div>\n\n            <div class=\"widget-body\">\n              <div class=\"widget-main\">\n                <div class=\"row\">\n                  <div class=\"col-xs-12\">\n                    <blockquote class=\"pull-right\">\n                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>\n\n                      <small>\n                        Someone famous\n                        <cite title=\"Source Title\">Source Title</cite>\n                      </small>\n                    </blockquote>\n                  </div>\n                </div>\n\n                <div class=\"row\">\n                  <div class=\"col-xs-12\">\n                    <blockquote>\n                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>\n\n                      <small>\n                        Someone famous\n                        <cite title=\"Source Title\">Source Title</cite>\n                      </small>\n                    </blockquote>\n                  </div>\n                </div>\n\n                <hr />\n                <address>\n                  <strong>Twitter, Inc.</strong>\n\n                  <br />\n                  795 Folsom Ave, Suite 600\n                  <br />\n                  San Francisco, CA 94107\n                  <br />\n                  <abbr title=\"Phone\">P:</abbr>\n                  (123) 456-7890\n                </address>\n\n                <address>\n                  <strong>Full Name</strong>\n\n                  <br />\n                  <a href=\"mailto:#\">first.last@example.com</a>\n                </address>\n              </div>\n            </div>\n          </div>\n        </div>\n\n        <div class=\"col-sm-8\">\n          <div class=\"row\">\n            <div class=\"col-xs-12\">\n              <div class=\"widget-box\">\n                <div class=\"widget-header widget-header-flat\">\n                  <h4 class=\"smaller\">Definition List</h4>\n\n                  <div class=\"widget-toolbar\">\n                    <label>\n                      <small class=\"green\">\n                        <b>Horizontal</b>\n                      </small>\n\n                      <input id=\"id-check-horizontal\" type=\"checkbox\" class=\"ace ace-switch ace-switch-6\" />\n                      <span class=\"lbl\"></span>\n                    </label>\n                  </div>\n                </div>\n\n                <div class=\"widget-body\">\n                  <div class=\"widget-main\">\n                    <code class=\"pull-right\" id=\"dt-list-code\">&lt;dl&gt;</code>\n\n                    <dl id=\"dt-list-1\">\n                      <dt>Description lists</dt>\n                      <dd>A description list is perfect for defining terms.</dd>\n                      <dt>Euismod</dt>\n                      <dd>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.</dd>\n                      <dd>Donec id elit non mi porta gravida at eget metus.</dd>\n                      <dt>Malesuada porta</dt>\n                      <dd>Etiam porta sem malesuada magna mollis euismod.</dd>\n                      <dt>Felis euismod semper eget lacinia</dt>\n                      <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>\n                    </dl>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n\n          <div class=\"space-6\"></div>\n\n          <div class=\"row\">\n            <div class=\"col-xs-12\">\n              <div class=\"widget-box\">\n                <div class=\"widget-header widget-header-flat\">\n                  <h4 class=\"smaller\">\n                    <i class=\"icon-code\"></i>\n                    Code view\n                  </h4>\n                </div>\n\n                <div class=\"widget-body\">\n                  <div class=\"widget-main\">\n                    <pre class=\"prettyprint linenums\">&lt;p class=\"muted\"&gt;Fusce dapibus, tellus ac cursus commodo.&lt;/p&gt;\n&lt;p class=\"text-warning\"&gt;Etiam porta sem malesuada.&lt;/p&gt;\n&lt;p class=\"text-error\"&gt;Donec ullamcorper nulla non metus auctor fringilla.&lt;/p&gt;\n&lt;p class=\"text-info\"&gt;Aenean eu leo quam.&lt;/p&gt;\n&lt;p class=\"text-success\"&gt;Duis mollis.&lt;/p&gt;</pre>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div><!-- PAGE CONTENT ENDS -->\n    </div><!-- /.col -->\n  </div><!-- /.row -->\n</template>\n"; });
-define('text!modules/fields/textbox/design.html', ['module'], function(module) { module.exports = "<template>\n  label: <input type=\"text\" value.bind=\"target.label\"><br>\n  Required: <input type=\"checkbox\" value='1'> Yes<br>\n  Readonly: <input type=\"checkbox\" value='1'> Yes<br>\n</template>\n"; });
-define('text!modules/fields/header/design.html', ['module'], function(module) { module.exports = "<template>\n  label: <input type=\"text\" value.bind=\"target.label\"><br>\n  Required: <input type=\"checkbox\" value='1'> Yes<br>\n  Readonly: <input type=\"checkbox\" value='1'> Yes<br>\n</template>\n"; });
+define('text!apps/harness/components/navigator/navigator.html', ['module'], function(module) { module.exports = "<template>\n  <style>\n    .nav-list {\n      list-style: none;\n      margin: 0;\n      padding: 0;\n    }\n    .nav-list li {\n      display: block;\n      padding: 0;\n      margin: 0;\n      border: 0;\n      position: relative;\n    }\n    .nav-list a {\n      padding: 10px 15px;\n      display: block;\n    }\n    .nav-list li ul {\n      margin: 0;\n      padding: 0;\n      display: none;\n    }\n    .nav-list li.open ul {\n      display: block;\n    }\n    .nav-list li ul a {\n      padding-left: 2em;\n      text-decoration: none;\n    }\n  </style>\n  <ul class=\"nav nav-list\">\n    <li repeat.for=\"menu of menus\" class=\"${menu.active?'open':''}\">\n      <a click.trigger=\"select({menu: {current: menu}})\">${menu.title}</a>\n      <ul class=\"sub-menu\" if.bind=\"menu.widgets\">\n        <li repeat.for=\"submenu of menu.widgets\">\n          <a click.trigger=\"select({menu: {current: submenu, parent: menu}})\">${submenu.title}</a>\n        </li>\n      </ul>\n    </li>\n  </ul>\n</template>\n"; });
+define('text!apps/harness/components/tabs/tabs.html', ['module'], function(module) { module.exports = "<tempalte>\n  <div class=\"tabs\">\n    <div class=\"tabs-header\">\n      <ul>\n        <li>aa</li>\n        <li>bb</li>\n      </ul>\n    </div>\n    <div class=\"tabs-content\">\n      <section>\n        aa\n      </section>\n      <section>\n        bb\n      </section>\n    </div>\n  </div>\n</tempalte>\n"; });
+define('text!apps/harness/docs/components/breadcrumbs/breadcrumbs.html', ['module'], function(module) { module.exports = "<template>Breadcrumbs demo</template>\n"; });
+define('text!apps/harness/docs/components/dashboard/dashboard.html', ['module'], function(module) { module.exports = "<template>\n  Dashboard Sample\n</template>\n"; });
+define('text!apps/harness/docs/components/elements/buttons.html', ['module'], function(module) { module.exports = "<template>\n  Elements/buttons Sample\n</template>\n"; });
+define('text!apps/harness/docs/components/elements/elements.html', ['module'], function(module) { module.exports = "<template>\n  Elements/elements Sample\n</template>\n"; });
+define('text!apps/harness/docs/components/elements/icons.html', ['module'], function(module) { module.exports = "<template>\n  Elements/icons Sample\n</template>\n"; });
+define('text!apps/harness/docs/components/elements/tree.html', ['module'], function(module) { module.exports = "<template>\n  Elements/tree Sample\n</template>\n"; });
+define('text!apps/harness/docs/components/layout/side-main.html', ['module'], function(module) { module.exports = "<template>\nYour Template Here\n</template>\n"; });
+define('text!apps/harness/docs/components/sidebar/sidebar.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"sidebar ${isExpanded?'expanded':''}\">\n    <button click.trigger=\"toggle()\">toggle</button>\n    <slot></slot>\n  </div>\n</template>\n"; });
+define('text!apps/harness/docs/components/typography/typography.html', ['module'], function(module) { module.exports = "<template>\n  <div class=\"page-header\">\n    <h1>\n      Typography\n      <small>\n        <i class=\"icon-double-angle-right\"></i>\n        This is page-header (.page-header &gt; h1)\n      </small>\n    </h1>\n  </div><!-- /.page-header -->\n\n  <div class=\"row\">\n    <div class=\"col-xs-12\">\n      <!-- PAGE CONTENT BEGINS -->\n\n      <div class=\"row\">\n        <div class=\"col-sm-6\">\n          <h4>Headings & Paragraphs</h4>\n\n          <hr />\n          <h1>h1. Heading 1</h1>\n          <p class=\"lead\">\n            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor. Duis mollis, est non commodo luctus.\n          </p>\n          <h2>h2. Heading 2</h2>\n          <p>\n            Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec ullamcorper nulla non metus auctor fringilla. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Donec ullamcorper nulla non metus auctor fringilla.\n          </p>\n          <h3>h3. Heading 3</h3>\n          <p>\n            Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.\n          </p>\n          <h4>h4. Heading 4</h4>\n          <h5>h5. Heading 5</h5>\n          <h6>h6. Heading 6</h6>\n        </div><!-- /span -->\n\n        <div class=\"col-sm-6\">\n          <div class=\"widget-box\">\n            <div class=\"widget-header widget-header-flat\">\n              <h4>Lists</h4>\n            </div>\n\n            <div class=\"widget-body\">\n              <div class=\"widget-main\">\n                <div class=\"row\">\n                  <div class=\"col-sm-6\">\n                    <ul>\n                      <li>Unordered List Item</li>\n\n                      <li>\n                        <small>List Item in small tag</small>\n                      </li>\n\n                      <li>\n                        <b>List Item in bold tag</b>\n                      </li>\n\n                      <li>\n                        <i>List Item in italics tag</i>\n                      </li>\n\n                      <li>\n                        <ul class=\"list-unstyled\">\n                          <li>\n                            <i class=\"icon-caret-right blue\"></i>\n                            Nested List Item\n                          </li>\n\n                          <li>\n                            <i class=\"icon-caret-right blue\"></i>\n                            Nested List Item\n                          </li>\n\n                          <li>\n                            <i class=\"icon-caret-right blue\"></i>\n                            Nested List Item\n                          </li>\n                        </ul>\n                      </li>\n                      <li>Unordered List Item which is a longer item and may break into more lines.</li>\n\n                      <li>\n                        <strong>List Item in strong tag</strong>\n                      </li>\n\n                      <li>\n                        <em>List Item in emphasis tag</em>\n                      </li>\n                    </ul>\n                  </div>\n\n                  <div class=\"col-sm-6\">\n                    <ol>\n                      <li>Ordered List Item</li>\n                      <li class=\"text-primary\">.text-primary Ordered List Item</li>\n                      <li class=\"text-danger\">.text-danger Ordered List Item</li>\n\n                      <li class=\"text-success\">\n                        <b>.text-success</b>\n                        Ordered List Item\n                      </li>\n                      <li class=\"text-warning\">.text-warning Ordered List Item</li>\n                      <li class=\"text-muted\">.text-muted Ordered List Item</li>\n                    </ol>\n                  </div>\n                </div>\n\n                <hr />\n                <div class=\"row\">\n                  <div class=\"col-xs-12\">\n                    <ul class=\"list-unstyled spaced\">\n                      <li>\n                        <i class=\"icon-bell bigger-110 purple\"></i>\n                        List with custom icons and more space\n                      </li>\n\n                      <li>\n                        <i class=\"icon-ok bigger-110 green\"></i>\n                        Unordered List Item # 2\n                      </li>\n\n                      <li>\n                        <i class=\"icon-remove bigger-110 red\"></i>\n                        Unordered List Item # 3\n                      </li>\n                    </ul>\n\n                    <ul class=\"list-unstyled spaced2\">\n                      <li>\n                        <i class=\"icon-circle green\"></i>\n                        Even more space\n                      </li>\n\n                      <li class=\"text-warning bigger-110 orange\">\n                        <i class=\"icon-warning-sign\"></i>\n                        Unordered List Item # 5\n                      </li>\n\n                      <li class=\"muted\">\n                        <i class=\"icon-angle-right bigger-110\"></i>\n                        Unordered List Item # 6\n                      </li>\n\n                      <li>\n                        <ul class=\"list-inline\">\n                          <li>\n                            <i class=\"icon-share-alt green bigger-110\"></i>\n                            Inline List Item # 1\n                          </li>\n                          <li>List Item # 2</li>\n                          <li>List Item # 3</li>\n                        </ul>\n                      </li>\n                    </ul>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div><!-- /span -->\n      </div>\n\n      <hr />\n      <div class=\"row\">\n        <div class=\"col-sm-4\">\n          <div class=\"widget-box\">\n            <div class=\"widget-header widget-header-flat\">\n              <h4 class=\"smaller\">\n                <i class=\"icon-quote-left smaller-80\"></i>\n                BlockQuote & Address\n              </h4>\n            </div>\n\n            <div class=\"widget-body\">\n              <div class=\"widget-main\">\n                <div class=\"row\">\n                  <div class=\"col-xs-12\">\n                    <blockquote class=\"pull-right\">\n                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>\n\n                      <small>\n                        Someone famous\n                        <cite title=\"Source Title\">Source Title</cite>\n                      </small>\n                    </blockquote>\n                  </div>\n                </div>\n\n                <div class=\"row\">\n                  <div class=\"col-xs-12\">\n                    <blockquote>\n                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.</p>\n\n                      <small>\n                        Someone famous\n                        <cite title=\"Source Title\">Source Title</cite>\n                      </small>\n                    </blockquote>\n                  </div>\n                </div>\n\n                <hr />\n                <address>\n                  <strong>Twitter, Inc.</strong>\n\n                  <br />\n                  795 Folsom Ave, Suite 600\n                  <br />\n                  San Francisco, CA 94107\n                  <br />\n                  <abbr title=\"Phone\">P:</abbr>\n                  (123) 456-7890\n                </address>\n\n                <address>\n                  <strong>Full Name</strong>\n\n                  <br />\n                  <a href=\"mailto:#\">first.last@example.com</a>\n                </address>\n              </div>\n            </div>\n          </div>\n        </div>\n\n        <div class=\"col-sm-8\">\n          <div class=\"row\">\n            <div class=\"col-xs-12\">\n              <div class=\"widget-box\">\n                <div class=\"widget-header widget-header-flat\">\n                  <h4 class=\"smaller\">Definition List</h4>\n\n                  <div class=\"widget-toolbar\">\n                    <label>\n                      <small class=\"green\">\n                        <b>Horizontal</b>\n                      </small>\n\n                      <input id=\"id-check-horizontal\" type=\"checkbox\" class=\"ace ace-switch ace-switch-6\" />\n                      <span class=\"lbl\"></span>\n                    </label>\n                  </div>\n                </div>\n\n                <div class=\"widget-body\">\n                  <div class=\"widget-main\">\n                    <code class=\"pull-right\" id=\"dt-list-code\">&lt;dl&gt;</code>\n\n                    <dl id=\"dt-list-1\">\n                      <dt>Description lists</dt>\n                      <dd>A description list is perfect for defining terms.</dd>\n                      <dt>Euismod</dt>\n                      <dd>Vestibulum id ligula porta felis euismod semper eget lacinia odio sem nec elit.</dd>\n                      <dd>Donec id elit non mi porta gravida at eget metus.</dd>\n                      <dt>Malesuada porta</dt>\n                      <dd>Etiam porta sem malesuada magna mollis euismod.</dd>\n                      <dt>Felis euismod semper eget lacinia</dt>\n                      <dd>Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</dd>\n                    </dl>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n\n          <div class=\"space-6\"></div>\n\n          <div class=\"row\">\n            <div class=\"col-xs-12\">\n              <div class=\"widget-box\">\n                <div class=\"widget-header widget-header-flat\">\n                  <h4 class=\"smaller\">\n                    <i class=\"icon-code\"></i>\n                    Code view\n                  </h4>\n                </div>\n\n                <div class=\"widget-body\">\n                  <div class=\"widget-main\">\n                    <pre class=\"prettyprint linenums\">&lt;p class=\"muted\"&gt;Fusce dapibus, tellus ac cursus commodo.&lt;/p&gt;\n&lt;p class=\"text-warning\"&gt;Etiam porta sem malesuada.&lt;/p&gt;\n&lt;p class=\"text-error\"&gt;Donec ullamcorper nulla non metus auctor fringilla.&lt;/p&gt;\n&lt;p class=\"text-info\"&gt;Aenean eu leo quam.&lt;/p&gt;\n&lt;p class=\"text-success\"&gt;Duis mollis.&lt;/p&gt;</pre>\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div><!-- PAGE CONTENT ENDS -->\n    </div><!-- /.col -->\n  </div><!-- /.row -->\n</template>\n"; });
+define('text!apps/harness/docs/components/table/table.html', ['module'], function(module) { module.exports = "<template>\nTable Demo\n</template>\n"; });
+define('text!apps/harness/docs/components/tabs/tabs.html', ['module'], function(module) { module.exports = "<tempalte>\n  Tabs\n</tempalte>\n"; });
 //# sourceMappingURL=app-bundle.js.map

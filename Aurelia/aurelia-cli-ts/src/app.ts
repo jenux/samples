@@ -14,7 +14,7 @@ export class App {
       { route: 'projects',    moduleId: './apps/projects/index',     nav: true, title: 'Projects'},
       { route: 'flow-builder',moduleId: './apps/flow-builder/index', nav: false, title: 'Flow Builder'},
       { route: 'form-builder',moduleId: './apps/form-builder/index', nav: false, title: 'Form Builder'},
-      { route: 'harness',     moduleId: './apps/harness/index',      nav: true, title: 'Harness'}
+      { route: 'harness',     moduleId: './apps/harness/docs/index', nav: true, title: 'Harness'}
     ]);
 
     this.router = router;
