@@ -1,0 +1,36 @@
+<template>
+
+    <ul class="nav nav-tabs pg-nav-tabs">
+        <li role="presentation" class="${activeTab=='demo'?'active':''}" click.trigger="activeTab='demo'"><a href="#">Demo</a>
+        </li>
+        <li role="presentation" class="${activeTab=='html'?'active':''}" click.trigger="activeTab='html'"><a href="#">Template</a>
+        </li>
+        <li role="presentation" if.bind="!htmlOnly" class="${activeTab=='js'?'active':''}"
+            click.trigger="activeTab='js'"><a href="#">JS Code</a></li>
+        <li role="presentation" repeat.for="s of extraTabs" class="${activeTab==s?'active':''}"
+            click.trigger="activeTab=s"><a href="#">${shortenExtra(s)}</a></li>
+    </ul>
+
+    <div>
+        <div if.bind="activeTab=='demo'">
+            <!-- View for html-only and view-model for CE's which have view-model -->
+            <compose view-model.bind="viewModelToUse" view.bind="viewToUse"></compose>
+        </div>
+
+        <div if.bind="activeTab=='html'">
+            <pre><code innerhtml.bind="htmlCode"></code></pre>
+        </div>
+
+        <div if.bind="activeTab=='js' && !htmlOnly">
+            <pre><code innerhtml.bind="jsCode"></code></pre>
+        </div>
+
+        <template repeat.for="s of extraTabs">
+            <div if.bind="activeTab==s">
+                <pre><code innerhtml.bind="extraTabsContent[s]"></code></pre>
+            </div>
+        </template>
+
+    </div>
+
+</template>

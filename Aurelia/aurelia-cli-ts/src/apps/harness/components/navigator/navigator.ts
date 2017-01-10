@@ -1,6 +1,11 @@
 import {bindable} from 'aurelia-framework';
 
 export class Navigator {
-  @bindable menus;
-  @bindable select;
+  @bindable router;
+  @bindable selected;
+  constructor() {}
+
+  attached() {
+    console.info('###', this.router)
+  }
 }

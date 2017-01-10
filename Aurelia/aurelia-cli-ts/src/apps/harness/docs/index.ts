@@ -8,7 +8,7 @@ export class Harness {
   constructor() {}
   
   selectMenu(menu) {
-    let nm = menu.current.id;
+    /*let nm = menu.current.id;
     menu.current.active = menu.current.hasOwnProperty('active') ? !menu.current.active : true;
     if (menu.parent && menu.parent.id) {
       nm = menu.parent.id + '/' + nm;
@@ -18,17 +18,18 @@ export class Harness {
       // toggle submenu show/hide, no need to navigate the route view
     } else {
       this.router.navigate(nm);
-    }
+    }*/
   }
 
   public configureRouter(config: RouterConfiguration, router: Router) {
     let conf = [
-      {route: '', moduleId: MenuPath(Menus[0], null), nav: true}
+      {route: '', moduleId: MenuPath(Menus[0], null), nav: true, title: 'Home'}
     ];
     Menus.forEach((menu)=>{
       if (menu.menus.length) {
         menu.menus.forEach((submenu) => {
           conf.push({
+            title: submenu.title,
             route: menu.id+'/'+submenu.id,
             moduleId: MenuPath(submenu, menu),
             nav: true
@@ -36,6 +37,7 @@ export class Harness {
         });
       } else {
         conf.push({
+          title: menu.title,
           route: menu.id,
           moduleId: MenuPath(menu, null),
           nav: true
@@ -44,6 +46,7 @@ export class Harness {
     });
   
     config.map(conf);
+    console.info('****', router)
     this.router = router;
   }
 }

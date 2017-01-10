@@ -1,0 +1,25 @@
+$colors: (
+  text: #333333,
+  text-dark: #000000,
+  text-danger: #D24C44,
+  text-info: #59c8d3,
+  text-success: #A9D96C,
+  text-warning: #FECA64
+);
+
+$fonts: (
+  family: ("Helvetica Neue", Helvetica, Arial, sans-serif),
+  size: 1rem,
+  size-xs: 0.8rem,
+  size-sm: 0.9rem,
+  size-lg: 1.25rem,
+  weight: 300
+);
+
+$spaces: (
+  none: 0,
+  xxs: 1px,
+  xs: 8px,
+  sm: 15px,
+  lg: 25px
+);

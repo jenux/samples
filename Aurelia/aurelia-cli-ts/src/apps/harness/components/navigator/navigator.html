@@ -30,8 +30,9 @@
     }
   </style>
   <ul class="nav nav-list">
-    <li repeat.for="menu of menus" class="${menu.active?'open':''}">
-      <a click.trigger="select({menu: {current: menu}})">${menu.title}</a>
+    <li repeat.for="row of router.navigation" class.bind="row.isActive && 'open'">
+      <!--<a data-toggle="collapse" data-target="#bs-example-navbar-collapse-1.in" href.bind="row.href">${row.title}</a>-->
+      <a href.bind="row.href">${row.title}</a>
       <ul class="sub-menu" if.bind="menu.widgets">
         <li repeat.for="submenu of menu.widgets">
           <a click.trigger="select({menu: {current: submenu, parent: menu}})">${submenu.title}</a>

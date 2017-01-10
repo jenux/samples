@@ -76,7 +76,6 @@
   <require from="../components/layout/side-main"></require>
   <require from="../components/navigator/navigator"></require>
   <require from="../components/breadcrumbs/breadcrumbs"></require>
-
   <require from="./components/sidebar/sidebar"></require>
 
 
@@ -84,9 +83,8 @@
     <sidebar class="app-navigation" 
       slot="side" is-expanded.two-way="isSidebarExpanded">
       <h3>Logo</h3>
-      <navigator 
-        select.call="selectMenu(menu)"
-        menus.bind="menus"></navigator>
+      <navigator
+        router.bind="router"></navigator>
     </sidebar>
 
     <div class="app-main" slot="main">
