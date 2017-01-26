@@ -1,0 +1,19 @@
+# vue-test
+
+> A Vue.js project
+> https://segmentfault.com/a/1190000007630677?utm_source=weekly&utm_medium=email&utm_campaign=email_weekly
+
+## Build Setup
+
+``` bash
+# install dependencies
+npm install
+
+# serve with hot reload at localhost:8080
+npm run dev
+
+# build for production with minification
+npm run build
+```
+
+For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
