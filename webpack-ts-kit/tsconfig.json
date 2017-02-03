@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "es5",
+    "jsx": "react",
+    "allowJs": true
+  },
+  "files": [
+    "src/app/app.ts",
+    "src/mobile/mobile.ts",
+    "node_modules/@types/lodash/index.d.ts",
+    "node_modules/@types/jquery/index.d.ts",
+    "node_modules/moment/moment.d.ts"
+  ]
+}
