@@ -1,4 +1,5 @@
 var path = require('path');
+var webpack = require('webpack');
 var HtmlwebpackPlugin = require('html-webpack-plugin');
 
 var ROOT_PATH = path.resolve(__dirname);
@@ -32,7 +33,8 @@ module.exports = {
       filename: 'mobile.html',
       chunks: ['mobile', 'vendors'],
       inject: 'body'
-    })
+    }),
+    new webpack.HotModuleReplacementPlugin()
   ],
   module: {
     loaders: [
@@ -52,7 +54,6 @@ module.exports = {
     compress: true,
     port: 9000,
     historyApiFallback: true,
-    hot: true,
     inline: true,
     progress: true,
     color: true
