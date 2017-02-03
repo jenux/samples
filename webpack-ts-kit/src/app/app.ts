@@ -4,10 +4,8 @@ import * as moment from 'moment';
 
 import './app.scss';
 
-function component () {
-  var elem = document.createElement('h1');
-  elem.innerHTML = _.join(['Hello','eee'], ' ');
-  return elem;
-}
-
-document.body.appendChild(component());
+$(function() {
+  let now = moment().format('LTS');
+  let rawHTML = `<h1>${now}</h1>`;
+  $('body').append(rawHTML);
+});
