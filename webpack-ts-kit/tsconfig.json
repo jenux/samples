@@ -8,11 +8,7 @@
     "jsx": "react",
     "allowJs": true
   },
-  "files": [
-    "src/app/app.ts",
-    "src/mobile/mobile.ts",
-    "node_modules/@types/lodash/index.d.ts",
-    "node_modules/@types/jquery/index.d.ts",
-    "node_modules/moment/moment.d.ts"
+  "includes": [
+    "src/**/*.ts"
   ]
 }
