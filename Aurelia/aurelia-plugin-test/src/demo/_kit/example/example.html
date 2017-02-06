@@ -1,0 +1,43 @@
+<template>
+    <div>
+      <!--<ul class="nav nav-tabs">
+        <li 
+          class.bind="actived=='demo'?'active':''" 
+          click.trigger="actived='demo'"><a href="#">Demo</a>
+        </li>
+        <li
+          class.bind="actived=='html'?'active':''" 
+          click.trigger="actived='html'"><a href="#">Template</a>
+        </li>
+        <li if.bind="!htmlOnly" 
+          class.bind="actived=='js'?'active':''"
+          click.trigger="actived='js'"><a href="#">JS Code</a>
+        </li>
+        <li repeat.for="s of extras" 
+          class.bind="actived==s?'active':''"
+          click.trigger="actived=s"><a href="#">${shortenExtra(s)}</a>
+        </li>
+      </ul>
+
+      <div>
+          <div if.bind="actived=='demo'">
+            <compose view-model.bind="viewModelToUse" view.bind="viewToUse"></compose>
+          </div>
+
+          <div if.bind="actived=='html'">
+              <pre><code innerhtml.bind="htmlCode"></code></pre>
+          </div>
+
+          <div if.bind="actived=='js' && !htmlOnly">
+              <pre><code innerhtml.bind="jsCode"></code></pre>
+          </div>
+
+          <template repeat.for="s of extras">
+              <div if.bind="actived==s">
+                  <pre><code innerhtml.bind="extraTabsContent[s]"></code></pre>
+              </div>
+          </template>
+      </div>-->
+      My Example
+    </div>
+</template>
