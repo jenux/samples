@@ -1,12 +1,21 @@
 System.config({
   defaultJSExtensions: true,
   transpiler: false,
-  separateCSS: false,
-  buildCSS: true,
   paths: {
     "*": "dist/*",
     "github:*": "jspm_packages/github/*",
     "npm:*": "jspm_packages/npm/*"
+  },
+  separateCSS: false,
+  buildCSS: true,
+  sassPluginOptions: {
+    "copyAssets": true,
+    "rewriteUrl": true,
+    "autoprefixer": {
+      "browsers": [
+        "last 2 versions"
+      ]
+    }
   },
   meta: {
     "*.scss": {
@@ -15,15 +24,6 @@ System.config({
     "bootstrap": {
       "deps": [
         "jquery"
-      ]
-    }
-  },
-  sassPluginOptions: {
-    "copyAssets": true,
-    "rewriteUrl": true,
-    "autoprefixer": {
-      "browsers": [
-        "last 2 versions"
       ]
     }
   },
